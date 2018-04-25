@@ -1,0 +1,10 @@
+{% for player in players %}
+
+{% if forloop.first %} 
+<strong>{{ player.name }}</strong> - {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }}  - {{ player.rank }}<br />
+{% else %}
+{{ player.name }} - {{ player.games }} meczy - wynik: {{ player.losses }} - {{ player.wins }} - {{ player.rank }}
+{% endif %}
+<br />
+
+{% endfor %}

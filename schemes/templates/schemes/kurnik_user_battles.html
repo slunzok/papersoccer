@@ -1,0 +1,20 @@
+{% for player in players %}
+
+{% if player.name == player1 %}
+{{ player1 }} vs {{ player2 }}<br /> {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }} - {{ player.rank }}
+
+{% endif %}
+
+{% endfor %}
+
+<hr />
+
+<ol>
+
+{% for replay in replays %}
+
+<li><a href="/partia/{{ replay.name }}/">{{ replay.name}}</a></li>
+
+{% endfor %}
+
+</ol>

@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import KurnikReplay
+
+class KurnikReplayAdmin(admin.ModelAdmin):
+    list_display = ('name', 'player1', 'player2')
+
+admin.site.register(KurnikReplay, KurnikReplayAdmin)

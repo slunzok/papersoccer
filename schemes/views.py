@@ -176,3 +176,7 @@ def kurnik_user_battles(request, player1_name, player2_name):
     else:
         return HttpResponse('Nie znaleziono gracza!')
 
+def create_scheme(request, replay_id):
+    replay = get_object_or_404(KurnikReplay, name=replay_id)
+    return render(request, 'schemes/create_scheme.html', {'replay': replay})
+

@@ -13,7 +13,7 @@
 
 {% for replay in replays %}
 
-<li><a href="/partia/{{ replay.name }}/">{{ replay.name}}</a></li>
+<li><a href="{% url 'schemes:create_scheme' replay.name %}">{{ replay.name }}</a></li>
 
 {% endfor %}
 

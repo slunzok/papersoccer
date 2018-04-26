@@ -1,9 +1,9 @@
 {% for player in players %}
 
 {% if forloop.first %} 
-<strong>{{ player.name }}</strong> - {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }}  - {{ player.rank }}<br />
+<strong><a href="{% url 'schemes:kurnik_user' player.name %}">{{ player.name }}</a></strong> - {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }}  - {{ player.rank }}<br />
 {% else %}
-{{ player.name }} - {{ player.games }} meczy - wynik: {{ player.losses }} - {{ player.wins }} - {{ player.rank }}
+<a href="{% url 'schemes:kurnik_user_battles' players.0.name player.name %}">{{ player.name }}</a> - {{ player.games }} meczy - wynik: {{ player.losses }} - {{ player.wins }} - {{ player.rank }}
 {% endif %}
 <br />
 

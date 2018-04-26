@@ -1,10 +1,20 @@
-{% for player in players %}
+{% extends "schemes/base.html" %}
 
-{% if forloop.first %} 
-<strong><a href="{% url 'schemes:kurnik_user' player.name %}">{{ player.name }}</a></strong> - {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }}  - {{ player.rank }}<br />
-{% else %}
-<a href="{% url 'schemes:kurnik_user_battles' players.0.name player.name %}">{{ player.name }}</a> - {{ player.games }} meczy - wynik: {{ player.losses }} - {{ player.wins }} - {{ player.rank }}
-{% endif %}
-<br />
+{% block content %}
 
-{% endfor %}
+    <div class="item">
+        <div class="content">
+            <h1>Gracz: {{ players.0.name }}</h1>
+            <div class="body">
+                {% for player in players %}
+                    {% if forloop.first %} 
+                        <p><strong><a href="{% url 'schemes:kurnik_user' player.name %}">{{ player.name }}</a></strong> - {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }}  - {{ player.rank }}</p>
+                    {% else %}
+                        <p><a href="{% url 'schemes:kurnik_user_battles' players.0.name player.name %}">{{ player.name }}</a> - {{ player.games }} meczy - wynik: {{ player.losses }} - {{ player.wins }} - {{ player.rank }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

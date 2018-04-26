@@ -5,7 +5,7 @@ from django.db.models import Q
 from .models import KurnikReplay
 
 def index(request):
-    return HttpResponse("Initial view")
+    return render(request, 'schemes/index.html')
 
 def kurnik_user(request, player_name):
     replays = KurnikReplay.objects.filter(Q(player1=player_name) | Q(player2=player_name))

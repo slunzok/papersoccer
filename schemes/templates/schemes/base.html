@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-language" content="pl" />
+<meta name="description" content="" />
+<meta name="keywords" content="" /> 
+<meta name="author" content=""/>
+
+<title>title</title>
+<link rel="stylesheet" type="text/css" href="/static/style.css" media="screen"/>
+<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/static/js/accordion.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+
+	<div class="header"></div>
+
+	<div class="navigation">
+
+        <ul id="accordion">
+            <li id="active">
+		        <h1>papersoccer.pl</h1>
+		        <ul>
+                    <li><a href="{% url 'schemes:index' %}">wejście główne</a></li>
+                    <li><a href="">link #2</a></li>
+                    <li><a href="">link #3</a></li>
+                    <li><a href="{% url 'schemes:kurnik_user' 'kurnikoland' %}">szukaj gracza (kurnik)</a></li>
+		        </ul>
+            </li>
+            <li>
+		        <h1>schematy - obrona</h1>
+		        <ul>                    <li><a href="">link #1</a></li>
+                    <li><a href="">link #2</a></li>
+                    <li><a href="">link #3</a></li>
+                    <li><a href="">link #4</a></li>
+		        </ul>
+            </li>
+            <li>
+		        <h1>schematy - atak</h1>
+		        <ul>                    <li><a href="">link #1</a></li>
+                    <li><a href="">link #2</a></li>
+                    <li><a href="">link #3</a></li>
+                    <li><a href="">link #4</a></li>
+		        </ul>
+            </li>
+            <li>
+                <h1>inne</h1>
+		        <ul>
+                    <li><a href="">link #1</a></li>
+                    <li><a href="">link #2</a></li>
+                    <li><a href="">link #3</a></li>
+                    <li><a href="">link #4</a></li>
+		        </ul>
+            </li>
+        </ul>
+
+	</div>
+		
+	<div class="main">
+        {% block content %}{% endblock %}
+	</div>
+	
+	<div class="clearer"><span></span></div>
+
+	<div class="footer">
+	
+		<span class="left">&copy; 2018 <a href="http://papersoccer.pl">papersoccer.pl</a> - Valid <a href="http://validator.w3.org/check?uri=referer">XHTML</a> &amp; <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a></span>
+		
+		<span class="right"><a href="http://templates.arcsin.se/">Website template</a> by <a href="http://arcsin.se/">Arcsin</a></span>
+
+		<div class="clearer"><span></span></div>
+
+	</div>
+
+</div>
+
+</body>
+
+</html>

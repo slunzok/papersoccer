@@ -1,0 +1,163 @@
+/*
+Template name: Bitter Sweet
+Template URI: http://templates.arcsin.se/bitter-sweet-website-template/
+Release date: 2006-10-02
+Last updated: 2009-08-17
+Description: Lime flavoured template with two columns.
+Author: Viktor Persson
+Author URI: http://arcsin.se/
+
+Modified by: root
+Last updated: 2018-04-17
+
+This template is licensed under a Creative Commons Attribution 2.5 License:
+http://templates.arcsin.se/license/
+*/
+
+/* standard elements */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+a {color: #682; text-decoration: none;}
+a:hover {color: #9A6; text-decoration: none;}
+
+body {
+    background: #308048 url(img/bg.png) repeat;
+	color: #333;
+	font: normal 62.5% "Lucida Sans Unicode",sans-serif;
+}
+
+p,ul {
+	font-size: 1.2em;
+	padding-bottom: 5px;
+}
+
+ul {margin-left: 1.3em;}
+li {list-style-image: url(img/li.gif);}
+
+h1 {font-size: 1.2em;}
+h1,h2,h3 {color: #654;}
+
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+span{
+    color: #fff;
+    font-size: 1.0em;
+}
+
+input {
+    background: #81AC00;
+	color: #fff;
+	font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+    border: none;
+    padding: 5px;
+    margin: 0 5px;
+}
+
+/* misc */
+.clearer {clear: both;}
+
+/* structure */
+.container {
+    background: url(img/bgcontainer.png) repeat-y;
+	margin: 0 auto;
+	width: 618px;
+}
+
+/* header - #688B00 */
+.header {
+    background: url(img/logo.png) no-repeat;
+	height: 60px;
+	margin: 0 auto;
+	width: 618px;
+}
+
+/* navigation */
+.navigation {
+	float: left;
+	width: 200px;
+}
+
+.navigation ul#accordion {
+    display: block;
+    width: 200px;
+    margin: auto;
+}
+
+.navigation h1 {
+	background: #81AC00;
+	color: #FFF;
+	font-size: 1.0em;
+	line-height: 33px;
+	padding-left: 12px;
+    cursor: pointer;
+}
+
+.navigation ul {margin: 0; padding: 0;}
+.navigation li {
+	border-bottom: 1px solid #D5E8AD;
+	list-style: none;
+}
+
+.navigation li:last-child {
+	border-bottom: none;
+}
+
+.navigation li a {
+	background: #E8F6BF url(img/bgnavigation.gif) repeat-x;	
+	color: #553;
+	display: block;
+    font-size: 0.75em;
+	padding: 8px 4px 8px 12px;
+	text-decoration: none;
+}
+
+.navigation li a:hover {
+	background: #F0FFC6;
+	color: #553;
+}
+
+/* main */
+.main {float: right; padding-bottom: 10px;}
+
+/* item */
+.item {clear: both;}
+
+.item .content {
+	float: right;
+	width: 418px;
+}
+
+.item h1 {
+	background: #567300;
+	color: #FFF;
+	line-height: 33px;
+	padding-left: 16px;
+}
+
+.item .body {padding: 10px 16px; text-align: justify;}
+
+/* footer */
+.footer {
+	background: #8ebc2c;
+	color: #FFF;
+	font-size: 1.1em;
+	line-height: 39px;
+	margin: 0 auto;
+	width: 617px;
+    border-right: 1px solid #567300;
+}
+.footer a {color: #FFF;}
+.footer a:hover {color: #FAFCB0;}
+.footer .left, .footer .right {padding: 0 12px;}
+.footer .right, .footer .right a {text-decoration: none; color: #DEC;}
+.footer .right a:hover {color: #FFF;}
+
+/* floats */
+.left {float: left;}
+.right {float: right;}

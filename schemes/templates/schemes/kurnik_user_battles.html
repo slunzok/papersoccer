@@ -1,20 +1,25 @@
-{% for player in players %}
+{% extends "schemes/base.html" %}
 
-{% if player.name == player1 %}
-{{ player1 }} vs {{ player2 }}<br /> {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }} - {{ player.rank }}
+{% block content %}
 
-{% endif %}
+    <div class="item">
+        <div class="content">
+            <h1>Mecze</h1>
+            <div class="body">
+                {% for player in players %}
+                    {% if player.name == player1 %}
+                        <p><strong><a href="{% url 'schemes:kurnik_user' player1 %}">{{ player1 }}</a> vs <a href="{% url 'schemes:kurnik_user' player2 %}">{{ player2 }}</a></strong><br /> {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }} - {{ player.rank }}</p>
+                    {% endif %}
+                {% endfor %}
 
-{% endfor %}
+                <hr />
 
-<hr />
+                {% for replay in replays %}
+                <p><a href="{% url 'schemes:create_scheme' replay.name %}">{{ replay.name }}</a></p>
+                {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
 
-<ol>
-
-{% for replay in replays %}
-
-<li><a href="{% url 'schemes:create_scheme' replay.name %}">{{ replay.name }}</a></li>
-
-{% endfor %}
-
-</ol>
+{% endblock %}

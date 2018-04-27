@@ -20,8 +20,8 @@ http://templates.arcsin.se/license/
 	padding: 0;
 }
 
-a {color: #682; text-decoration: none;}
-a:hover {color: #9A6; text-decoration: none;}
+a {color: #000; text-decoration: none;}
+a:hover {color: #2f8f35; text-decoration: none;}
 
 body {
     background: #308048 url(img/bg.png) repeat;
@@ -40,23 +40,121 @@ li {list-style-image: url(img/li.gif);}
 h1 {font-size: 1.2em;}
 h1,h2,h3 {color: #654;}
 
+h1 a{color: #ebebeb; text-decoration: none;}
+h1 a:hover {color: #ebebeb; text-decoration: none;}
+
 img {
     display: block;
     margin: 0 auto;
 }
 
-span{
+img.match{
+    display: inline;
+}
+
+span {
     color: #fff;
     font-size: 1.0em;
 }
 
+canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+form {
+    background: #308048;
+    color: #fff;
+    font-weight: bold;
+    padding: 4px 5px 0px 16px;
+    border-right: 1px solid #567300;
+}
+
+label {
+    width: 70px;
+    float: left;
+    text-align: right;
+    padding: 6px 5px 6px 0px;
+}
+
+select{
+    width: 316px;
+    height: 27px;
+    background: #81AC00;
+    color: #fff;
+    font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+    border: none;
+    padding: 5px;
+    margin: 0px 0px 0px 5px;
+}
+
+textarea {
+    width: 306px;
+    height: 100px;
+    background: #81AC00;
+    color: #fff;
+    font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+    border: none;
+    padding: 5px;
+    margin: 0px 0px 0px 5px;
+}
+
 input {
     background: #81AC00;
-	color: #fff;
-	font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+    color: #fff;
+    font: normal 1.1em "Lucida Sans Unicode",sans-serif;
     border: none;
     padding: 5px;
     margin: 0 5px;
+}
+
+input.scheme {
+    background: #81AC00;
+    color: #fff;
+    font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+    border: none;
+    padding: 5px;
+    margin: 0px 0px 0px 5px;
+    width: 306px;
+}
+
+input.left_button {
+    background: #81AC00;
+    color: #fff;
+    font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+    border: none;
+    padding: 5px;
+    margin: 0px;
+}
+
+.possible {
+    background: #81AC00;
+    padding: 5px;
+}
+
+.blocked {
+    background: #ac1d1d;
+    padding: 5px;
+}
+
+.permutation {
+    background: #000;
+    padding: 5px;
+}
+
+.small {
+    font-size: 0.8em;
+    color: #000;
+}
+
+.red_bull {
+    color: #ac1d1d;
+    font-weight: bold;
+}
+
+.green_bull {
+    color: #81AC00;
+    font-weight: bold;
 }
 
 /* misc */
@@ -140,7 +238,20 @@ input {
 	padding-left: 16px;
 }
 
+.item h1.green {
+    background: #308048;
+    color: #FFF;
+    line-height: 33px;
+    padding-left: 16px;
+    border-right: 1px solid #567300;
+}
+
+span#move, span#schemeElements{
+ color: #d8e000; font-weight: bold;
+}
+
 .item .body {padding: 10px 16px; text-align: justify;}
+.item .board {padding: 0px 16px; background: #308048; border-right: 1px solid #567300;}
 
 /* footer */
 .footer {
@@ -161,3 +272,62 @@ input {
 /* floats */
 .left {float: left;}
 .right {float: right;}
+
+table {margin-bottom: 1.4em; width: 100%;}
+th {font-weight: bold;}
+thead th {background: #C3D9FF;}
+th,td,caption {padding: 4px 10px 4px 5px;}
+tr.even td {background: #F2F6FA;}
+tfoot {font-style: italic;}
+caption {background: #EEE;}
+
+table.data-table {
+    margin-bottom: 2em;
+    width: 99%;
+    font-size: 1.3em;
+}
+table.data-table th {
+    background: #81AC00;
+    border: 1px solid #DDD;
+    color: #FFF;
+    text-align: center;
+    cursor: pointer;
+}
+table.data-table tr {border-bottom: 1px solid #DDD;}
+table.data-table td, .data-table2 th {padding: 4px;}
+table.data-table td.catalog, .data-table2 th.catalog {width: 70%;}
+table.data-table td.catalog2, .data-table2 th.catalog2 {width: 30%;}
+
+table.data-table td {
+    background: #FCFCFC;
+    border: 1px solid #DDD;
+    text-align: center;
+    padding-left: 10px;
+}
+table.data-table tr.even td {background: #FCFCFC;}
+
+table.data-table2 {
+    margin-bottom: 2em;
+    width: 99%;
+    font-size: 1.3em;
+}
+table.data-table2 th {
+    background: #81AC00;
+    border: 1px solid #DDD;
+    color: #FFF;
+    text-align: center;
+    cursor: pointer;
+}
+table.data-table2 tr {border-bottom: 1px solid #DDD;}
+table.data-table2 td, .data-table2 th {padding: 4px; width: 49%;}
+table.data-table2 td.catalog3, .data-table2 th.catalog {width: 60%;}
+table.data-table2 td.catalog4, .data-table2 th.catalog2 {width: 40%;}
+
+table.data-table2 td {
+    background: #FCFCFC;
+    border: 1px solid #DDD;
+    text-align: left;
+    padding-left: 10px;
+}
+table.data-table2 tr.even td {background: #FCFCFC;}
+

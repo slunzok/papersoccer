@@ -1,0 +1,84 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %}<span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span>{% endif %}</h1>
+
+            {% if directory.user == request.user %}
+
+                <form action="" method="POST" id="add_directory_form" style="display:none">
+                {% csrf_token %}
+
+                {{ add_directory_form.non_field_errors }}
+
+                {% for field in add_directory_form %}
+
+                    {% if field.errors %}
+
+                        {% if field.html_name != "parent_dir" %}
+
+                            <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                            <p><label></label> {{ field.errors.as_text }}</p>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        {% if field.html_name != "parent_dir" %}
+
+                            <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                {% endfor %}
+
+                <p><label></label> <input name="create_scheme_directory" type="submit" value="Utwórz katalog" /></p>
+
+                </form>
+
+            {% endif %}
+
+            <div class="body">
+
+                {% if directory.children_scheme_directory.count == 0 %}
+
+                    <p><strong>Brak podkatalogów!</strong></p>
+
+                {% else %}
+
+                    <ul>
+
+                    {% for directory in directory.children_scheme_directory.all %}
+
+                        <li><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %} &rarr; <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a> {% endif %} <br /> {{ directory.get_scheme_access_display }} - {{ directory.get_scheme_type_display }} -  podkatalogów: {{ directory.children_scheme_directory.count }} - plików: {{ directory.schemes.count }}</li>
+
+                    {% endfor %}
+
+                    </ul>
+
+                {% endif %}
+
+                {% if directory.schemes.count != 0 %}
+
+                    <ul>
+
+                    {% for scheme in directory.schemes.all %}
+
+                        <li>nothing now</li>
+
+                    {% endfor %}
+
+                    </ul>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

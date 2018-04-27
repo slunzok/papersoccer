@@ -1,0 +1,19 @@
+{% if schemes.count == 0%}
+
+Brak dodanych schematów przez tego użytkownika!
+
+{% else %}
+
+<ul>
+
+{% for scheme in schemes %}
+
+<li>{{ scheme.id }} - {{ scheme.replay }}</li>
+
+{% endfor %}
+
+</ul>
+
+<a href="/schematy/">Powrót</a>
+
+{% endif %}

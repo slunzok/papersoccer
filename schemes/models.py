@@ -1,4 +1,26 @@
+from django.contrib.auth.models import User
 from django.db import models
+
+# Works for versions greater than Django 1.9
+# https://stackoverflow.com/questions/1208698/how-do-i-use-commaseparatedintegerfield-in-django
+from django.core.validators import validate_comma_separated_integer_list
+
+SCHEME_ACCESS = (
+    ('1', 'oficjalny'),
+    ('2', 'publiczny'),
+    ('3', 'prywatny'),
+)
+
+SCHEME_TYPE = (
+    ('1', 'obrona'),
+    ('2', 'atak'),
+    ('3', 'inne'),
+)
+
+BOARD_TYPE = (
+    ('0', 'normalne'),
+    ('1', 'odwrócone'),
+)
 
 class KurnikReplay(models.Model):
     name = models.CharField(max_length=10)
@@ -14,3 +36,27 @@ class KurnikReplay(models.Model):
 
     def __str__(self):
         return self.name
+
+class SchemeDirectory(models.Model):
+    parent_dir = models.ForeignKey('self', blank=True, null=True, related_name="children_scheme_directory", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, related_name="scheme_directory_owner", on_delete=models.CASCADE)
+    scheme_access = models.CharField(max_length=1, choices=SCHEME_ACCESS)
+    scheme_type = models.CharField(max_length=1, choices=SCHEME_TYPE)
+    description = models.TextField(max_length=4000, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Scheme(models.Model):
+    directory = models.ForeignKey(SchemeDirectory, related_name="schemes", on_delete=models.CASCADE)
+    replay = models.ForeignKey(KurnikReplay, blank=True, null=True, related_name="replays", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="scheme_creator", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    elements = models.CharField(validators=[validate_comma_separated_integer_list], max_length=100)
+    board = models.CharField(max_length=1, choices=BOARD_TYPE)
+    comment = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.name
+

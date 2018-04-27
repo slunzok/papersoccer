@@ -1,0 +1,79 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a></h1>
+
+            <form action="" method="POST">
+            {% csrf_token %}
+
+            {{ edit_directory_form.non_field_errors }}
+
+            {% for field in edit_directory_form %}
+
+            {% if field.errors %}
+
+                {% if field.html_name == "parent_dir" %}
+
+                    <p><label for="id_parent_dir">Katalog: </label>
+
+                    <select id="id_parent_dir" name="parent_dir" required>
+
+                    <option value="">---------</option>
+
+                    {% for user_directory in user_directories %}
+
+                    <option value="{{ user_directory.id }}" {% if user_directory.id == directory.parent_dir.id %}selected="selected"{% endif %}>{% if user_directory.scheme_access == '1' %}[oficjalny]{% elif user_directory.scheme_access == '2' %}[publiczny]{% elif user_directory.scheme_access == '3'%}[prywatny]{% endif %} {% if user_directory.scheme_type == '1' %}[obrona]{% elif user_directory.scheme_type == '2' %}[atak]{% elif user_directory.scheme_type == '3'%}[inne]{% endif %} {% if user_directory.parent_dir != None %}{{ user_directory.parent_dir.name }} -{% endif%} {{ user_directory.name }}</option>
+
+
+                    {% endfor %}
+
+                    </select></p>
+                    <p><label></label> {{ field.errors.as_text }}</p>
+
+                {% else %}
+
+                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                    <p><label></label> {{ field.errors.as_text }}</p>
+
+                {% endif %}
+
+            {% else %}
+
+                {% if field.html_name == "parent_dir" %}
+
+                    <p><label for="id_parent_dir">Katalog:</label>
+
+                    <select id="id_parent_dir" name="parent_dir" required>
+
+                    <option value="">---------</option>
+
+                    {% for user_directory in user_directories %}
+
+                    <option value="{{ user_directory.id }}" {% if user_directory.id == directory.parent_dir.id %}selected="selected"{% endif %}>{% if user_directory.scheme_access == '1' %}[oficjalny]{% elif user_directory.scheme_access == '2' %}[publiczny]{% elif user_directory.scheme_access == '3'%}[prywatny]{% endif %} {% if user_directory.scheme_type == '1' %}[obrona]{% elif user_directory.scheme_type == '2' %}[atak]{% elif user_directory.scheme_type == '3'%}[inne]{% endif %} {% if user_directory.parent_dir != None %}{{ user_directory.parent_dir.name }} -{% endif%} {{ user_directory.name }}</option>
+
+                    {% endfor %}
+
+                    </select></p>
+
+                {% else %}
+
+                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+                {% endif %}
+
+            {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="change_directory_settings" type="submit" value="Zmień ustawienia!" /></p>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+

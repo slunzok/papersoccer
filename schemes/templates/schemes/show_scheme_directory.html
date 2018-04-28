@@ -44,35 +44,67 @@
 
             <div class="body">
 
+                {% if directory.description != '' %} <p><strong>Opis:</strong> {{ directory.description }} </p>{% endif %}
+
                 {% if directory.children_scheme_directory.count == 0 %}
 
                     <p><strong>Brak podkatalogów!</strong></p>
 
                 {% else %}
 
-                    <ul>
+                    <p><strong>Katalogi:</strong></p>
+
+                    <table id="myTable" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable')">Schemat</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable')">Rodzaj</th>
+                    </tr>
 
                     {% for directory in directory.children_scheme_directory.all %}
 
-                        <li><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %} &rarr; <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a> {% endif %} <br /> {{ directory.get_scheme_access_display }} - {{ directory.get_scheme_type_display }} -  podkatalogów: {{ directory.children_scheme_directory.count }} - plików: {{ directory.schemes.count }}</li>
+                    <tr>
+
+                        <td><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %} <br /> <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a> {% endif %}</td>
+                        <td>{{ directory.get_scheme_access_display }}</td>
+                        <td>{{ directory.get_scheme_type_display }}</td>
+                    </tr>
 
                     {% endfor %}
 
-                    </ul>
+                    </table>
 
                 {% endif %}
 
                 {% if directory.schemes.count != 0 %}
 
-                    <ul>
+                    <p><strong>Schematy:</strong></p>
+
+                    <table id="myTable2" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable2')">Nazwa</th>
+                        {% if directory.scheme_access == '1' %}
+                            <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Autor</th>
+                        {% else %}
+                            <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Ustawienia</th>
+                        {% endif %}
+                    </tr>
 
                     {% for scheme in directory.schemes.all %}
 
-                        <li>nothing now</li>
+                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.replay }}</a></td>
+                        {% if scheme.directory.scheme_access == '1' %}
+                            <td colspan="2"><a href="{% url 'schemes:user_official_schemes' scheme.directory.id scheme.user %}"> {{ scheme.user }}</a></td>
+                        {% else %}
+                            <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
+                            <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
+                        {% endif %}
 
                     {% endfor %}
 
-                    </ul>
+                    </table>
 
                 {% endif %}
 

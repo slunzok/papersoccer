@@ -14,15 +14,27 @@
 
                 {% else %}
 
-                    <ul>
+                    <p><strong>Katalogi publiczne:</strong></p>
+
+                    <table id="myTable" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable')">Schemat</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable')">Rodzaj</th>
+                    </tr>
 
                     {% for directory in directories %}
 
-                        <li><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> <br /> {{ directory.get_scheme_access_display }} - {{ directory.get_scheme_type_display }} - podkatalogów: {{ directory.children_scheme_directory.count }} - plików: {{ directory.schemes.count }}</li>
+                    <tr>
+                        <td><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> <br /> <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a></td>
+                        <td>{{ directory.get_scheme_access_display }}</td>
+                        <td>{{ directory.get_scheme_type_display }}</td>
+                    </tr>
 
                     {% endfor %}
 
-                    </ul>
+                    </table>
 
                 {% endif %}
 

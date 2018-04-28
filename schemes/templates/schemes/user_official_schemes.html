@@ -1,19 +1,45 @@
-{% if schemes.count == 0%}
+{% extends "schemes/base.html" %}
 
-Brak dodanych schematów przez tego użytkownika!
+{% block content %}
 
-{% else %}
+    <div class="item">
+        <div class="content">
+            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a></strong></h1>
 
-<ul>
+            <div class="body">
 
-{% for scheme in schemes %}
+                {% if schemes.count == 0%}
 
-<li>{{ scheme.id }} - {{ scheme.replay }}</li>
+                    <p><strong>Brak dodanych schematów oficjalnych przez tego użytkownika!</strong></p>
 
-{% endfor %}
+                {% else %}
 
-</ul>
+                    <p><strong>Schematy oficjalne:</strong></p>
 
-<a href="/schematy/">Powrót</a>
+                    <table id="myTable" class="data-table">
 
-{% endif %}
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
+                        <th style="width: 50%" onclick="sortTable(1, 'myTable')" colspan="2">Ustawienia</th>
+                    </tr>
+
+                    {% for scheme in schemes %}
+
+                    <tr>
+                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.replay }}</a></td>
+                        <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
+                        <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </table>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

@@ -4,7 +4,7 @@
 
     <div class="item">
         <div class="content">
-            <h1>moje schematy <span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span></h1>
+            <h1>Moje schematy <span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span></h1>
 
             <form action="" method="POST" id="add_directory_form" style="display:none">
             {% csrf_token %}
@@ -46,29 +46,53 @@
 
                 {% else %}
 
-                    <ul>
+                    <p><strong>Katalogi:</strong></p>
+
+                    <table id="myTable" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable')">Schemat</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable')">Rodzaj</th>
+                    </tr>
 
                     {% for directory in directories %}
 
-                        <li><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> &rarr; <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a> <br /> {{ directory.get_scheme_access_display }} - {{ directory.get_scheme_type_display }} - podkatalogów: {{ directory.children_scheme_directory.count }} - plików: {{ directory.schemes.count }}</li>
+                    <tr>
+                        <td><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> <br /> <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a></td>
+                        <td>{{ directory.get_scheme_access_display }}</td>
+                        <td>{{ directory.get_scheme_type_display }}</td>
+                    </tr>
 
                     {% endfor %}
 
-                    </ul>
+                    </table>
 
                 {% endif %}
 
                 {% if schemes.count != 0 %}
 
-                    <ul>
+                    <p><strong>Schematy oficjalne:</strong></p>
+
+                    <table id="myTable2" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable2')">Nazwa</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable2')">Schemat</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable2')">Rodzaj</th>
+                    </tr>
 
                     {% for scheme in schemes %}
 
-                        <li>nothing now</li>
+                    <tr>
+                        <td><a href="{% url 'schemes:user_official_schemes' scheme.id request.user %}">{{ scheme.parent_dir.name }} {{ scheme.name }}</a><br />dodanych: {{ scheme.user_official_schemes }}</td>
+                        <td>{{ scheme.parent_dir.get_scheme_access_display }}</td>
+                        <td>{{ scheme.parent_dir.get_scheme_type_display }}</td>
+                    </tr>
 
                     {% endfor %}
 
-                    </ul>
+                    </table>
 
                 {% endif %}
 

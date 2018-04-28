@@ -8,7 +8,7 @@ Author: Viktor Persson
 Author URI: http://arcsin.se/
 
 Modified by: root
-Last updated: 2018-04-17
+Last updated: 2018-04-28
 
 This template is licensed under a Creative Commons Attribution 2.5 License:
 http://templates.arcsin.se/license/
@@ -294,9 +294,7 @@ table.data-table th {
     cursor: pointer;
 }
 table.data-table tr {border-bottom: 1px solid #DDD;}
-table.data-table td, .data-table2 th {padding: 4px;}
-table.data-table td.catalog, .data-table2 th.catalog {width: 70%;}
-table.data-table td.catalog2, .data-table2 th.catalog2 {width: 30%;}
+table.data-table td, .data-table th {padding: 4px;}
 
 table.data-table td {
     background: #FCFCFC;
@@ -305,29 +303,4 @@ table.data-table td {
     padding-left: 10px;
 }
 table.data-table tr.even td {background: #FCFCFC;}
-
-table.data-table2 {
-    margin-bottom: 2em;
-    width: 99%;
-    font-size: 1.3em;
-}
-table.data-table2 th {
-    background: #81AC00;
-    border: 1px solid #DDD;
-    color: #FFF;
-    text-align: center;
-    cursor: pointer;
-}
-table.data-table2 tr {border-bottom: 1px solid #DDD;}
-table.data-table2 td, .data-table2 th {padding: 4px; width: 49%;}
-table.data-table2 td.catalog3, .data-table2 th.catalog {width: 60%;}
-table.data-table2 td.catalog4, .data-table2 th.catalog2 {width: 40%;}
-
-table.data-table2 td {
-    background: #FCFCFC;
-    border: 1px solid #DDD;
-    text-align: left;
-    padding-left: 10px;
-}
-table.data-table2 tr.even td {background: #FCFCFC;}
 

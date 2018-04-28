@@ -16,7 +16,7 @@ def index(request):
 # 01. /schematy/
 def user_scheme_directories(request):
     if request.user.is_authenticated:
-        directories = SchemeDirectory.objects.filter(parent_dir=None, user=request.user).order_by('scheme_access', 'scheme_type', 'name')
+        directories = SchemeDirectory.objects.filter(parent_dir=None, user=request.user).order_by('name')
         schemes = SchemeDirectory.objects.filter(parent_dir__gt=0, scheme_access=1, schemes__user=request.user).annotate(user_official_schemes=Count('name'))
 
         if request.method == 'POST':
@@ -37,7 +37,7 @@ def user_scheme_directories(request):
 # 02. /schematy/<username>/
 def user_public_scheme_directories(request, username):
     user = get_object_or_404(User, username=username)
-    directories = SchemeDirectory.objects.filter(parent_dir=None, user=user, scheme_access=2).order_by('scheme_access', 'scheme_type', 'name')
+    directories = SchemeDirectory.objects.filter(parent_dir=None, user=user, scheme_access=2).order_by('name')
     return render(request, 'schemes/user_public_scheme_directories.html', {'user': user, 'directories': directories})
 
 # 03. /schematy/katalog/<directory_id>/user/<username>/
@@ -45,7 +45,7 @@ def user_official_schemes(request, directory_id, username):
     directory = get_object_or_404(SchemeDirectory, pk=directory_id, scheme_access=1)
     user = get_object_or_404(User, username=username)
     schemes = Scheme.objects.filter(directory=directory, user=user)
-    return render(request, 'schemes/user_official_schemes.html', {'schemes': schemes})
+    return render(request, 'schemes/user_official_schemes.html', {'directory': directory, 'schemes': schemes})
 
 # 04. /schematy/katalog/<id>/
 def show_scheme_directory(request, directory_id):
@@ -67,7 +67,7 @@ def show_scheme_directory(request, directory_id):
 
     else:
         if directory.scheme_access == '3':
-            return HttpResponse('prywatny katalog')
+            return HttpResponse('Prywatny katalog!')
         else:
             return render(request, 'schemes/show_scheme_directory.html', {'directory': directory})
 
@@ -88,7 +88,7 @@ def edit_scheme_directory(request, directory_id):
         return render(request, 'schemes/edit_scheme_directory.html', {'directory': directory, 'edit_directory_form': edit_directory_form, 'user_directories': user_directories})
 
     else:
-        return HttpResponse("Nie jesteś właścicielem tego katalogu")
+        return HttpResponse("Nie jesteś właścicielem tego katalogu!")
 
 # 06. /schematy/katalog/<id>/usun/
 def delete_scheme_directory(request, directory_id):
@@ -101,9 +101,9 @@ def delete_scheme_directory(request, directory_id):
         else:
             return render(request, 'schemes/delete_scheme_directory.html', {'directory': directory})
     else:
-        return HttpResponse("Nie jesteś właścicielem tego katalogu")
+        return HttpResponse("Nie jesteś właścicielem tego katalogu!")
 
-# 07. /schematy/szukaj/<search_scheme>
+# 07. /schematy/szukaj/<search_scheme>/
 def search_scheme(request, search_scheme):
     if request.user.is_authenticated:
         search_scheme = SchemeDirectory.objects.filter(Q(user=request.user, parent_dir__name__contains=search_scheme) | Q(user=request.user, name__contains=search_scheme)| Q(parent_dir__gt=0, scheme_access=1, parent_dir__name__contains=search_scheme) | Q(parent_dir__gt=0, scheme_access=1, name__contains=search_scheme))
@@ -135,6 +135,46 @@ def create_scheme(request, replay_id):
         scheme_form = SchemeForm(user_id=request.user.id)
 
     return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form})
+
+# 09. /schemat/<scheme_id>/
+def show_scheme(request, scheme_id):
+    scheme = get_object_or_404(Scheme, pk=scheme_id)
+
+    if scheme.user != request.user and scheme.directory.scheme_access == '3':
+        return HttpResponse("Schemat prywatny!")
+    else:
+        return render(request, 'schemes/show_scheme.html', {'scheme': scheme})
+
+# 10. /schemat/<scheme_id>/edytuj/
+def edit_scheme(request, scheme_id):
+    scheme = get_object_or_404(Scheme, pk=scheme_id)
+
+    if scheme.user == request.user:
+        user_directories = SchemeDirectory.objects.filter(Q(user=request.user) | Q(parent_dir__gt=0, scheme_access=1))
+        if request.method == 'POST':
+            scheme_form = SchemeForm(request.POST, instance=scheme, user_id=request.user.id)
+            if scheme_form.is_valid():
+                scheme_form.save()
+                return HttpResponseRedirect(reverse('schemes:edit_scheme', args=(scheme.id,)))
+        else:
+            scheme_form = SchemeForm(instance=scheme, user_id=request.user.id)
+
+        return render(request, 'schemes/edit_scheme.html', {'scheme': scheme, 'scheme_form': scheme_form, 'user_directories': user_directories})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tego schematu!")
+
+# 11. /schemat/<scheme_id>/usun/
+def delete_scheme(request, scheme_id):
+    scheme = get_object_or_404(Scheme, pk=scheme_id)
+
+    if scheme.user == request.user:
+        if request.method == 'POST':
+            scheme.delete()
+            return HttpResponse("Schemat usunięty!")
+        else:
+            return render(request, 'schemes/delete_scheme.html', {'scheme': scheme})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tego schematu!")
 
 # Kurnik
 

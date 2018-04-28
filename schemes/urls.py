@@ -13,6 +13,7 @@ urlpatterns = [
     re_path(r'^schematy/katalog/(?P<directory_id>\d+)/$', views.show_scheme_directory, name='show_scheme_directory'),
     re_path(r'^schematy/katalog/(?P<directory_id>\d+)/edytuj/$', views.edit_scheme_directory, name='edit_scheme_directory'),
     re_path(r'^schematy/katalog/(?P<directory_id>\d+)/usun/$', views.delete_scheme_directory, name='delete_scheme_directory'),
+    re_path(r'^schematy/szukaj/(?P<search_scheme>([a-zA-Z0-9_\s\-\+\@\.]+))/$', views.search_scheme, name='search_scheme'),
     re_path(r'^partia/(?P<replay_id>\d+)/$',  views.create_scheme, name='create_scheme'),
     # Kurnik
     re_path(r'^kurnik/(?P<player_name>([a-zA-Z0-9]+))/$', views.kurnik_user, name='kurnik_user'),

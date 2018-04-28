@@ -1,0 +1,11 @@
+<label>Schemat:</label>
+
+<select id="id_directory" name="directory" required>
+
+{% for scheme in search_scheme %}
+
+<option value="{{ scheme.id }}">{% if scheme.scheme_access == '1' %}[oficjalny]{% elif scheme.scheme_access == '2' %}[publiczny]{% elif scheme.scheme_access == '3'%}[prywatny]{% endif %} {% if scheme.scheme_type == '1' %}[obrona]{% elif scheme.scheme_type == '2' %}[atak]{% elif scheme.scheme_type == '3'%}[inne]{% endif %} {% if scheme.parent_dir != None %}{{ scheme.parent_dir.name }} -{% endif%} {{ scheme.name }}</option>
+
+{% endfor %}
+
+</select> 

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q, Count
 
 from .models import KurnikReplay, SchemeDirectory, Scheme
-from .forms import SchemeDirectoryForm
+from .forms import SchemeDirectoryForm, SchemeForm
 
 def index(request):
     return render(request, 'schemes/index.html')
@@ -103,10 +103,38 @@ def delete_scheme_directory(request, directory_id):
     else:
         return HttpResponse("Nie jesteś właścicielem tego katalogu")
 
-# noID
+# 07. /schematy/szukaj/<search_scheme>
+def search_scheme(request, search_scheme):
+    if request.user.is_authenticated:
+        search_scheme = SchemeDirectory.objects.filter(Q(user=request.user, parent_dir__name__contains=search_scheme) | Q(user=request.user, name__contains=search_scheme)| Q(parent_dir__gt=0, scheme_access=1, parent_dir__name__contains=search_scheme) | Q(parent_dir__gt=0, scheme_access=1, name__contains=search_scheme))
+
+        if search_scheme:
+            return render(request, 'schemes/search_scheme.html', {'search_scheme': search_scheme})
+        else:
+            return HttpResponse('Nie znaleziono schematu!')
+
+    else:
+        return HttpResponse('Opcja dostępna tylko dla zalogowanych użytkowników!')
+
+# 08. /partia/<replay_id>/
 def create_scheme(request, replay_id):
     replay = get_object_or_404(KurnikReplay, name=replay_id)
-    return render(request, 'schemes/create_scheme.html', {'replay': replay})
+
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            scheme_form = SchemeForm(request.POST, user_id=request.user.id)
+            if scheme_form.is_valid():
+                scheme = scheme_form.save(commit=False)
+                scheme.replay = replay
+                scheme.user = request.user
+                scheme.save()
+                return HttpResponse("OK")
+        else:
+            return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
+    else:
+        scheme_form = SchemeForm(user_id=request.user.id)
+
+    return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form})
 
 # Kurnik
 

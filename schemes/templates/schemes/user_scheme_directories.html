@@ -50,7 +50,7 @@
 
                     {% for directory in directories %}
 
-                        <li><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> <br /> {{ directory.get_scheme_access_display }} - {{ directory.get_scheme_type_display }} - podkatalogów: {{ directory.children_scheme_directory.count }} - plików: {{ directory.schemes.count }}</li>
+                        <li><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> &rarr; <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a> <br /> {{ directory.get_scheme_access_display }} - {{ directory.get_scheme_type_display }} - podkatalogów: {{ directory.children_scheme_directory.count }} - plików: {{ directory.schemes.count }}</li>
 
                     {% endfor %}
 

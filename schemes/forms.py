@@ -1,7 +1,9 @@
 from django import forms
+from django.db.models import Q
 
-from .models import SchemeDirectory
+from .models import SchemeDirectory, Scheme
 #from .models import SCHEME_ACCESS, SCHEME_TYPE
+from .models import BOARD_TYPE
 
 SCHEME_ACCESS = (
     ('', '---------'),
@@ -49,4 +51,27 @@ class SchemeDirectoryForm(forms.ModelForm):
             raise forms.ValidationError("Na razie nie można dodawać oficjalnych!")
 
         return scheme_access
+
+class SchemeForm(forms.ModelForm):
+    elements = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Elementy')
+    board = forms.ChoiceField(choices=BOARD_TYPE, label='Boisko')
+    comment = forms.CharField(widget=forms.Textarea, required=False, label='Opis')
+    
+    class Meta:
+        model = Scheme
+        fields = ('elements', 'board', 'directory', 'comment')
+
+    def __init__(self, *args, **kwargs):
+        self.user_id = kwargs.pop('user_id', None)
+        super(SchemeForm, self).__init__(*args, **kwargs)
+
+    def clean_directory(self):
+        directory = self.cleaned_data['directory']
+
+        user_directory = SchemeDirectory.objects.filter(Q(pk=directory.id, user=self.user_id) | Q(pk=directory.id, parent_dir__gt=0, scheme_access=1))
+
+        if not user_directory:
+            raise forms.ValidationError("To katalog innego użytkownika!")
+
+        return directory
 

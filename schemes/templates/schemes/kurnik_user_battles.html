@@ -6,18 +6,88 @@
         <div class="content">
             <h1>Mecze</h1>
             <div class="body">
-                {% for player in players %}
-                    {% if player.name == player1 %}
-                        <p><strong><a href="{% url 'schemes:kurnik_user' player1 %}">{{ player1 }}</a> vs <a href="{% url 'schemes:kurnik_user' player2 %}">{{ player2 }}</a></strong><br /> {{ player.games }} meczy - wynik: {{ player.wins }} - {{ player.losses }} - {{ player.rank }}</p>
-                    {% endif %}
-                {% endfor %}
 
-                <hr />
+                <table id="myTable2" class="data-table">
+
+                <tr>
+                    <th style="width: 33%">Meczy</th>
+                    <th style="width: 33%">Zwycięstw</th>
+                    <th style="width: 33%">Porażek</th>
+                </tr>
+
+                {% if players.0.name == player1 %}
+
+                    <tr>
+                        <td>{{ players.0.games }}</td>
+                        <td>{{ players.0.wins }}</td>
+                        <td>{{ players.0.losses }}</td>
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td>{{ players.1.games }}</td>
+                        <td>{{ players.1.wins }}</td>
+                        <td>{{ players.1.losses }}</td>
+                    </tr>
+
+                {% endif %}
+
+                </table>
+
+                <table id="myTable" class="data-table">
+
+                <tr>
+                    <th style="width: 50%" onclick="sortTable(0, 'myTable')">Gracz</th>
+                    <th style="width: 50%" onclick="sortTable(1, 'myTable')">Średni ranking</th>
+                </tr>
+
+                {% if players.0.name == player1 %}
+
+                    <tr>
+                        <td><a href="{% url 'schemes:kurnik_user' players.0.name %}">{{ players.0.name }}</a></td>
+                        <td>{{ players.0.rank }}</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="{% url 'schemes:kurnik_user' players.1.name %}">{{ players.1.name }}</a></td>
+                        <td>{{ players.1.rank }}</td>
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td><a href="{% url 'schemes:kurnik_user' players.1.name %}">{{ players.1.name }}</a></td>
+                        <td>{{ players.1.rank }}</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="{% url 'schemes:kurnik_user' players.0.name %}">{{ players.0.name }}</a></td>
+                        <td>{{ players.0.rank }}</td>
+                    </tr>
+                {% endif %}
+
+                </table>
+
+                <p><strong>Dostępne opcje:</strong></p>
+                <p><a href="{% url 'schemes:create_and_add_vreplays' player1 player2 %}">Utwórz katalog i skopiuj do niego partie</a></p>
+                <p><a href="{% url 'schemes:add_vreplays' player1 player2 %}">Skopiuj partie do już istniejącego katalogu</a></p>
+
+                <table id="myTable3" class="data-table">
+
+                <tr>
+                    <th style="width: 50%" onclick="sortTable(0, 'myTable3')">Partia</th>
+                    <th style="width: 50%" onclick="sortTable(1, 'myTable3')">Wygrał</th>
+                </tr>
 
                 {% for replay in replays %}
-                <p><a href="{% url 'schemes:create_scheme' replay.name %}">{{ replay.name }}</a></p>
+
+                    <tr>
+                        <td><a href="{% url 'schemes:create_scheme' replay.name %}">{{ replay.name }}</a></td>
+                        <td>{% if replay.result == '0-1' %} <a href="{% url 'schemes:kurnik_user' replay.player2 %}">{{ replay.player2 }}</a> {% else %} <a href="{% url 'schemes:kurnik_user' replay.player1 %}">{{ replay.player1 }}</a> {% endif %}</td>
                 {% endfor %}
-                </p>
+
+                </table>
+
             </div>
         </div>
     </div>

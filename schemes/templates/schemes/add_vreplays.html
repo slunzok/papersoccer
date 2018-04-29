@@ -1,0 +1,79 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>Skopiuj pliki do katalogu</h1>
+
+            <form action="" method="POST">
+            {% csrf_token %}
+
+            {{ add_replay_form.non_field_errors }}
+
+            {% for field in add_replay_form %}
+
+                {% if field.errors %}
+
+                    {% if field.html_name == "directory" %}
+
+                        <p><label for="id_directory">Katalog: </label>
+
+                        <select id="id_directory" name="directory" required>
+
+                        <option value="">---------</option>
+
+                        {% for user_directory in user_directories %}
+
+                        <option value="{{ user_directory.id }}">{% if user_directory.replay_access == '2' %}[publiczny]{% elif user_directory.replay_access == '3'%}[prywatny]{% endif %} {% if user_directory.parent_dir != None %}{{ user_directory.parent_dir.name }} -{% endif%} {{ user_directory.name }}</option>
+
+
+                        {% endfor %}
+
+                        </select></p>
+                        <p><label></label> {{ field.errors.as_text }}</p>
+
+                    {% else %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                        <p><label></label> {{ field.errors.as_text }}</p>
+
+                    {% endif %}
+
+                {% else %}
+
+                    {% if field.html_name == "directory" %}
+
+                        <p><label for="id_directory">Katalog:</label>
+
+                        <select id="id_directory" name="directory" required>
+
+                        <option value="">---------</option>
+
+                        {% for user_directory in user_directories %}
+
+                        <option value="{{ user_directory.id }}" {% if user_directory.id == directory.parent_dir.id %}selected="selected"{% endif %}>{% if user_directory.replay_access == '2' %}[publiczny]{% elif user_directory.replay_access == '3'%}[prywatny]{% endif %} {% if user_directory.parent_dir != None %}{{ user_directory.parent_dir.name }} -{% endif%} {{ user_directory.name }}</option>
+
+                        {% endfor %}
+
+                        </select></p>
+
+                    {% else %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="copy_vreplays" type="submit" value="Zrób to!" /></p>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+

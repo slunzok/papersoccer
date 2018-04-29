@@ -1,0 +1,67 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a></h1>
+
+            {% if directory.vreplays.count == 0 %}
+
+                <div class="body">
+
+                    <p><strong>Brak plików.</strong></p>
+
+                </div>
+
+            {% else %}
+
+                <form action="" method="POST">
+                {% csrf_token %}
+
+                {{ replays_formset.management_form }}
+
+                {{ replays_formset.non_form_errors }}
+
+                {% for form in replays_formset.forms %}
+
+                    {% for replay in directory.vreplays.all %}
+
+                        {% if forloop.counter0 == forloop.parentloop.counter0 %}
+
+                            <p><label></label> {% if replay.replay != None %}<a href="{% url 'schemes:create_scheme' replay.replay.name %}" style="color: #fff;">{{ replay.replay }}.txt</a>{% endif %}</p>
+
+                        {% endif%}
+
+                    {% endfor %}
+
+                    {% for field in form.visible_fields %}
+
+                        {% if field != form.DELETE %}
+                            <p><label>Status:</label> {{ field }} <br /><br /><label>Usuń:</label> {% if replays_formset.can_delete %} {{ form.DELETE }}{% endif %}</p>
+                            <p><label></label> {{ field.errors.as_text }}</p>
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% for field in form.hidden_fields %}
+
+                        <p>{{ field }}</p>
+                        <p>{{ field.errors.as_text }}</p>
+
+                    {% endfor %}
+
+
+                {% endfor %}
+
+                <p><label></label> <input name="change_vreplay_settings" type="submit" value="Zmień ustawienia!" /></p>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
+

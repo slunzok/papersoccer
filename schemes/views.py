@@ -4,9 +4,10 @@ from django.urls import reverse
 
 from django.contrib.auth.models import User
 from django.db.models import Q, Count
+from django.forms.models import inlineformset_factory
 
 from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay
-from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm
+from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, CheckReplayForm, BaseReplayFormSet
 
 def index(request):
     return render(request, 'schemes/index.html')
@@ -312,10 +313,33 @@ def delete_vreplay(request, vreplay_id):
     else:
         return HttpResponse("Nie jesteś właścicielem tego pliku!")
 
+# 08. /partie/katalog/<id>/sprawdz-wiele/
+def manage_vreplays(request, directory_id):
+    directory = get_object_or_404(ReplayDirectory, pk=directory_id)
+
+    if directory.user == request.user:
+        ReplaysFormSet = inlineformset_factory(ReplayDirectory, Replay, form=CheckReplayForm, formset=BaseReplayFormSet, extra=0, can_delete=True)
+        if request.method == 'POST':
+            replays_formset = ReplaysFormSet(request.POST, instance=directory)
+            if replays_formset.is_valid():
+                #for form in replays_formset.forms:
+                    #if form.has_changed():
+                        #form.save()
+
+                replays_formset.save()
+                return HttpResponseRedirect(reverse('schemes:manage_vreplays', args=(directory.id,)))
+        else:
+            replays_formset = ReplaysFormSet(instance=directory)
+
+        return render(request, 'schemes/manage_virtual_replays.html', {'directory': directory, 'replays_formset': replays_formset})
+
+    else:
+        return HttpResponse("Nie jesteś właścicielem katalogu!")
+
 # Kurnik
 
 def kurnik_user(request, player_name):
-    replays = KurnikReplay.objects.filter(Q(player1=player_name) | Q(player2=player_name))
+    replays = KurnikReplay.objects.filter(Q(player1=player_name) | Q(player2=player_name)).order_by('name')
 
     if replays:
 
@@ -399,7 +423,7 @@ def kurnik_user(request, player_name):
         return HttpResponse('Nie znaleziono gracza!')
 
 def kurnik_user_battles(request, player1_name, player2_name):
-    replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name))
+    replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')
 
     if replays:
 
@@ -482,4 +506,59 @@ def kurnik_user_battles(request, player1_name, player2_name):
 
     else:
         return HttpResponse('Nie znaleziono gracza!')
+
+def create_and_add_vreplays(request, player1_name, player2_name):
+    if request.user.is_authenticated:
+        replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')
+
+        if replays:
+            user_directories = ReplayDirectory.objects.filter(user=request.user)
+
+            if request.method == 'POST':
+                add_directory_form = ReplayDirectoryForm(request.POST, user_id=request.user)
+                if add_directory_form.is_valid():
+                    add_directory = add_directory_form.save(commit=False)
+                    add_directory.user = request.user
+                    add_directory.save()
+
+                    for replay in replays:
+                        add_vreplay = Replay(directory=add_directory, replay=replay, user=request.user, checked="0")
+                        add_vreplay.save()
+
+                    return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_directory.id,)))
+            else:
+                add_directory_form = ReplayDirectoryForm(user_id=request.user)
+
+            return render(request, 'schemes/create_and_add_vreplays.html', {'player1': player1_name, 'player2': player2_name, 'add_directory_form': add_directory_form, 'user_directories': user_directories})
+        else:
+            return HttpResponse("Nie znaleziono jednego z gracza, błąd.")
+    else:
+        return HttpResponse("Tylko zalogowani użytkownicy mają dostęp do tej opcji!")
+
+
+def add_vreplays(request, player1_name, player2_name):
+    if request.user.is_authenticated:
+        replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')
+
+        if replays:
+            user_directories = ReplayDirectory.objects.filter(user=request.user)
+
+            if request.method == 'POST':
+                add_replay_form = ReplayForm(request.POST, user_id=request.user)
+                if add_replay_form.is_valid():
+                    replay_directory = ReplayDirectory.objects.get(pk=request.POST.get('directory', '1'))
+
+                    for replay in replays:
+                        add_vreplay = Replay(directory=replay_directory, replay=replay, user=request.user, checked=request.POST.get('checked', '0'))
+                        add_vreplay.save()
+
+                    return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(replay_directory.id,)))
+            else:
+                add_replay_form = ReplayForm(user_id=request.user)
+
+            return render(request, 'schemes/add_vreplays.html', {'add_replay_form': add_replay_form, 'user_directories': user_directories})
+        else:
+            return HttpResponse("Nie znaleziono jednego z gracza, błąd.")
+    else:
+        return HttpResponse("Tylko zalogowani użytkownicy mają dostęp do tej opcji!")
 

@@ -5,6 +5,8 @@ from .models import SchemeDirectory, Scheme, ReplayDirectory, Replay
 #from .models import SCHEME_ACCESS, SCHEME_TYPE
 from .models import BOARD_TYPE, REPLAY_ACCESS, REPLAY_STATUS
 
+from django.forms.models import BaseInlineFormSet
+
 SCHEME_ACCESS = (
     ('', '---------'),
     ('2', 'publiczny'),
@@ -121,4 +123,23 @@ class ReplayForm(forms.ModelForm):
             raise forms.ValidationError("Katalog nie znajduje się w twojej bibliotece! " + str(directory.id))
 
         return directory
+
+class CheckReplayForm(forms.ModelForm):
+    checked = forms.ChoiceField(choices=REPLAY_STATUS, label='Status')
+
+    class Meta:
+        model = Replay
+        fields = ('checked',)
+
+class BaseReplayFormSet(BaseInlineFormSet):
+    def clean(self):
+        if any(self.errors):
+            return
+
+        for form in self.forms:
+            replay = form.cleaned_data['id']
+            directory = form.cleaned_data['directory']
+            valid_replay = Replay.objects.filter(pk=replay.id, directory=directory.id)
+            if not valid_replay:
+                raise forms.ValidationError("Partia nie należy do tego katalogu!")
 

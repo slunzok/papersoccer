@@ -25,10 +25,12 @@ urlpatterns = [
     re_path(r'^partie/katalog/(?P<directory_id>\d+)/$', views.show_replay_directory, name='show_replay_directory'),
     re_path(r'^partie/katalog/(?P<directory_id>\d+)/edytuj/$', views.edit_replay_directory, name='edit_replay_directory'),
     re_path(r'^partie/katalog/(?P<directory_id>\d+)/usun/$', views.delete_replay_directory, name='delete_replay_directory'),
-    #url(r'^partie/katalog/(?P<directory_id>\d+)/pliki/$', views.manage_virtual_replays, name='manage_virtual_replays'),
     re_path(r'^wirtualny/(?P<vreplay_id>\d+)/edytuj/$',  views.edit_vreplay, name='edit_vreplay'),
     re_path(r'^wirtualny/(?P<vreplay_id>\d+)/usun/$',  views.delete_vreplay, name='delete_vreplay'),
+    re_path(r'^partie/katalog/(?P<directory_id>\d+)/sprawdz-wiele/$', views.manage_vreplays, name='manage_vreplays'),
     # Kurnik
     re_path(r'^kurnik/(?P<player_name>([a-zA-Z0-9]+))/$', views.kurnik_user, name='kurnik_user'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/$', views.kurnik_user_battles, name='kurnik_user_battles'),
+    re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/utworz-kopiuj/$', views.create_and_add_vreplays, name='create_and_add_vreplays'),
+    re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/kopiuj/$', views.add_vreplays, name='add_vreplays'),
 ]

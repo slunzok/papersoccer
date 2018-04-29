@@ -76,7 +76,7 @@
 
                 {% if directory.vreplays.count != 0 %}
 
-                    <p><strong>Pliki ({{ directory.vreplays.count }})</strong></p>
+                    <p><strong>Pliki ({{ directory.vreplays.count }})</strong> <span class="right"><a href="{% url 'schemes:manage_vreplays' directory.id %}">sprawdź wiele plików</a></span></p>
 
                     <table id="myTable2" class="data-table">
 

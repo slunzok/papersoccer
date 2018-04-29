@@ -1,0 +1,44 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>{{ user }} - katalogi publiczne</h1>
+
+            <div class="body">
+
+                {% if directories.count == 0 %}
+
+                    <p><strong>Brak podkatalogów!</strong></p>
+
+                {% else %}
+
+                    <table id="myTable" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Katalog</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable')">Dostęp</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable')">Partie</th>
+                    </tr>
+
+                    {% for directory in directories %}
+
+                    <tr>
+                        <td><a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a></td>
+                        <td>{{ directory.get_replay_access_display }}</td>
+                        <td>{{ directory.vreplays.count }} plików</td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </table>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

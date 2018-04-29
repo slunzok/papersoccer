@@ -1,9 +1,9 @@
 from django import forms
 from django.db.models import Q
 
-from .models import SchemeDirectory, Scheme
+from .models import SchemeDirectory, Scheme, ReplayDirectory, Replay
 #from .models import SCHEME_ACCESS, SCHEME_TYPE
-from .models import BOARD_TYPE
+from .models import BOARD_TYPE, REPLAY_ACCESS, REPLAY_STATUS
 
 SCHEME_ACCESS = (
     ('', '---------'),
@@ -72,6 +72,53 @@ class SchemeForm(forms.ModelForm):
 
         if not user_directory:
             raise forms.ValidationError("To katalog innego użytkownika!")
+
+        return directory
+
+class ReplayDirectoryForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Nazwa')
+    replay_access = forms.ChoiceField(choices=REPLAY_ACCESS, label='Dostęp')
+
+    class Meta:
+        model = ReplayDirectory
+        fields = ('parent_dir', 'name', 'replay_access')
+
+    def __init__(self, *args, **kwargs):
+        self.user_id = kwargs.pop('user_id', None)
+        super(ReplayDirectoryForm, self).__init__(*args, **kwargs)
+        #if self.instance:
+            #self.fields['parentId'].queryset = ReplayDirectory.objects.filter(user=self.user_id)
+
+    def clean_parent_dir(self):
+        parent_dir = self.cleaned_data['parent_dir']
+
+        if parent_dir != None:
+            user_directory = ReplayDirectory.objects.filter(pk=parent_dir.id, user=self.user_id)
+            if not user_directory:
+                raise forms.ValidationError("To katalog innego użytkownika!")
+
+        return parent_dir
+
+class ReplayForm(forms.ModelForm):
+    checked = forms.ChoiceField(choices=REPLAY_STATUS, label='Status')
+
+    class Meta:
+        model = Replay
+        fields = ('directory', 'checked')
+
+    def __init__(self, *args, **kwargs):
+        self.user_id = kwargs.pop('user_id', None)
+        super(ReplayForm, self).__init__(*args, **kwargs)
+        #if self.instance:
+            #self.fields['directory'].queryset = ReplayDirectory.objects.filter(user=self.user_id)
+
+    def clean_directory(self):
+        directory = self.cleaned_data['directory']
+
+        user_directory = ReplayDirectory.objects.filter(pk=directory.id, user=self.user_id)
+
+        if not user_directory:
+            raise forms.ValidationError("Katalog nie znajduje się w twojej bibliotece! " + str(directory.id))
 
         return directory
 

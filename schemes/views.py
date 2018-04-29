@@ -5,8 +5,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db.models import Q, Count
 
-from .models import KurnikReplay, SchemeDirectory, Scheme
-from .forms import SchemeDirectoryForm, SchemeForm
+from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay
+from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm
 
 def index(request):
     return render(request, 'schemes/index.html')
@@ -116,7 +116,7 @@ def search_scheme(request, search_scheme):
     else:
         return HttpResponse('Opcja dostępna tylko dla zalogowanych użytkowników!')
 
-# 08. /partia/<replay_id>/
+# 08A. /partia/<replay_id>/
 def create_scheme(request, replay_id):
     replay = get_object_or_404(KurnikReplay, name=replay_id)
 
@@ -135,6 +135,27 @@ def create_scheme(request, replay_id):
         scheme_form = SchemeForm(user_id=request.user.id)
 
     return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form})
+
+# 08B. /partia/<replay_id>/dodaj/
+def add_to_user_replay_directory(request, replay_id):
+    replay = get_object_or_404(KurnikReplay, name=replay_id)
+
+    if request.user.is_authenticated:
+        user_directories = ReplayDirectory.objects.filter(user=request.user)
+        if request.method == 'POST':
+            replay_form = ReplayForm(request.POST, user_id=request.user.id)
+            if replay_form.is_valid():
+                add_replay = replay_form.save(commit=False)
+                add_replay.replay = replay
+                add_replay.user = request.user
+                add_replay.save()
+                return HttpResponse("OK")
+        else:
+            replay_form = ReplayForm(user_id=request.user.id)
+
+        return render(request, 'schemes/add_replay.html', {'replay': replay, 'replay_form': replay_form, 'user_directories': user_directories})
+    else:
+        return HttpResponse('Opcja dostępna tylko dla zalogowanych użytkowników!')
 
 # 09. /schemat/<scheme_id>/
 def show_scheme(request, scheme_id):
@@ -175,6 +196,121 @@ def delete_scheme(request, scheme_id):
             return render(request, 'schemes/delete_scheme.html', {'scheme': scheme})
     else:
         return HttpResponse("Nie jesteś właścicielem tego schematu!")
+
+# Virtual Replays
+
+# 01. /partie/
+def user_replay_directories(request):
+    if request.user.is_authenticated:
+        directories = ReplayDirectory.objects.filter(parent_dir=None, user=request.user).order_by('name')
+
+        if request.method == 'POST':
+            add_directory_form = ReplayDirectoryForm(request.POST, user_id=request.user)
+            if add_directory_form.is_valid():
+                add_directory = add_directory_form.save(commit=False)
+                add_directory.user = request.user
+                add_directory.save()
+                return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_directory.id,)))
+        else:
+            add_directory_form = ReplayDirectoryForm(user_id=request.user)
+
+        return render(request, 'schemes/user_replay_directories.html', {'directories': directories, 'add_directory_form': add_directory_form})
+
+    else:
+        return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
+
+# 02. /partie/<username>/
+def user_public_replay_directories(request, username):
+    user = get_object_or_404(User, username=username)
+    directories = ReplayDirectory.objects.filter(parent_dir=None, user=user, replay_access=2).order_by('name')
+    return render(request, 'schemes/user_public_replay_directories.html', {'user': user, 'directories': directories})
+
+# 03. /partie/katalog/<id>/
+def show_replay_directory(request, directory_id):
+    directory = get_object_or_404(ReplayDirectory, pk=directory_id)
+
+    if directory.user == request.user:
+        if request.method == 'POST':
+            add_directory_form = ReplayDirectoryForm(request.POST, user_id=request.user)
+            if add_directory_form.is_valid():
+                add_directory = add_directory_form.save(commit=False)
+                add_directory.parent_dir = directory
+                add_directory.user = request.user
+                add_directory.save()
+                return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_directory.id,)))
+        else:
+            add_directory_form = ReplayDirectoryForm(user_id=request.user)
+
+        return render(request, 'schemes/show_replay_directory.html', {'directory': directory, 'add_directory_form': add_directory_form})
+
+    else:
+        if directory.replay_access == '3':
+            return HttpResponse('Prywatny katalog!')
+        else:
+            return render(request, 'schemes/show_replay_directory.html', {'directory': directory})
+
+# 04. /partie/katalog/<id>/edytuj/
+def edit_replay_directory(request, directory_id):
+    directory = get_object_or_404(ReplayDirectory, pk=directory_id)
+
+    if directory.user == request.user:
+        user_directories = ReplayDirectory.objects.filter(user=request.user)
+        if request.method == 'POST':
+            edit_directory_form = ReplayDirectoryForm(request.POST, instance=directory, user_id=request.user)
+            if edit_directory_form.is_valid():
+                edit_directory_form.save()
+                return HttpResponseRedirect(reverse('schemes:edit_replay_directory', args=(directory.id,)))
+        else:
+            edit_directory_form = ReplayDirectoryForm(instance=directory, user_id=request.user)
+
+        return render(request, 'schemes/edit_replay_directory.html', {'directory': directory, 'edit_directory_form': edit_directory_form, 'user_directories': user_directories})
+
+    else:
+        return HttpResponse("Nie jesteś właścicielem tego katalogu")
+
+# 05. /partie/katalog/<id>/usun/
+def delete_replay_directory(request, directory_id):
+    directory = get_object_or_404(ReplayDirectory, pk=directory_id)
+
+    if directory.user == request.user:
+        if request.method == 'POST':
+            directory.delete()
+            return HttpResponse("Katalog (wraz z podkatalogami i schematami) usunięty!")
+        else:
+            return render(request, 'schemes/delete_replay_directory.html', {'directory': directory})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tego katalogu")
+
+# 06. /wirtualny/<id>/edytuj/
+def edit_vreplay(request, vreplay_id):
+    vreplay = get_object_or_404(Replay, pk=vreplay_id)
+
+    if vreplay.user == request.user:
+        user_directories = ReplayDirectory.objects.filter(user=request.user)
+        if request.method == 'POST':
+            vreplay_form = ReplayForm(request.POST, instance=vreplay, user_id=request.user.id)
+            if vreplay_form.is_valid():
+                vreplay_form.save()
+                return HttpResponseRedirect(reverse('schemes:edit_vreplay', args=(vreplay.id,)))
+        else:
+            vreplay_form = ReplayForm(instance=vreplay, user_id=request.user.id)
+
+        return render(request, 'schemes/edit_vreplay.html', {'vreplay': vreplay, 'vreplay_form': vreplay_form, 'user_directories': user_directories})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tego pliku!")
+
+# 07. /wirtualny/<id>/usun/
+def delete_vreplay(request, vreplay_id):
+    vreplay = get_object_or_404(Replay, pk=vreplay_id)
+
+    if vreplay.user == request.user:
+        if request.method == 'POST':
+            vreplay.delete()
+            return HttpResponse("vreplay usunięty!")
+        else:
+            return render(request, 'schemes/delete_vreplay.html', {'vreplay': vreplay})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tego pliku!")
 
 # Kurnik
 

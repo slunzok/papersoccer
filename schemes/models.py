@@ -22,6 +22,16 @@ BOARD_TYPE = (
     ('1', 'odwrócone'),
 )
 
+REPLAY_ACCESS = (
+    ('2', 'publiczny'),
+    ('3', 'prywatny'),
+)
+
+REPLAY_STATUS = (
+    ('0', 'niesprawdzone'),
+    ('1', 'sprawdzone'),
+)
+
 class KurnikReplay(models.Model):
     name = models.CharField(max_length=10)
     player1 = models.CharField(max_length=20)
@@ -59,4 +69,22 @@ class Scheme(models.Model):
 
     def __str__(self):
         return self.name
+
+class ReplayDirectory(models.Model):
+    parent_dir = models.ForeignKey('self', blank=True, null=True, related_name="children_replay_directory", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, related_name="replay_directory_owner", on_delete=models.CASCADE)
+    replay_access = models.CharField(max_length=1, choices=REPLAY_ACCESS)
+
+    def __str__(self):
+        return self.name
+
+class Replay(models.Model):
+    directory = models.ForeignKey(ReplayDirectory, related_name="vreplays", on_delete=models.CASCADE)
+    replay = models.ForeignKey(KurnikReplay, blank=True, null=True, related_name="kreplays", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="vreplay_owner", on_delete=models.CASCADE)
+    checked = models.CharField(max_length=1, choices=REPLAY_STATUS)
+
+    def __str__(self):
+        return self.checked
 

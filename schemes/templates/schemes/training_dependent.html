@@ -1,0 +1,52 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><input class="left_button" type="button" value="mazak Gmocha" id="gmoch" onclick="setGmochMode()" /> <span id="mouse"></span> <span class="right"><input id="save_replay" type="button" value="zapisz partię" onclick="gmochToggleForm('save_replay_form', 'save_replay')" /> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="obróć boisko" onclick="rotate()" /><input type="button" value="tu zakończ ruch" id="cut_back_accept" onclick='manageMoves()' /></span></h1>
+
+            <form action="" method="POST" id="save_replay_form" style="display:none">
+            {% csrf_token %}
+
+            {{ user_replay_form.non_field_errors }}
+
+            {% for field in user_replay_form %}
+
+            {% if field.errors %}
+
+                <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                <p><label></label> {{ field.errors.as_text }}</p>
+
+            {% else %}
+
+                <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+            {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="create_custom_replay" type="submit" value="Zapisz partię" /></p>
+
+            </form>
+
+            <div class="board">
+                <canvas id="myCanvas" width="306" height="442"></canvas>
+                <script type="text/javascript">
+                    var moves_string = "{{ replay.moves }}";
+                    var moves = moves_string.split(" ");
+                </script>
+                <script type="text/javascript" src="/static/js/gmoch2.js"></script>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="content">
+            <h1><span id="all_moves"></span> &nbsp; <span class="right"><input id="poss" class="possible" type="button" value="" style="display:none" /><input id="block" class="blocked" type="button" value="" style="display:none" /><input id="perm" class="permutation" type="button" value="" style="display:none" /></span></h1>
+        </div>
+    </div>
+
+{% endblock %}

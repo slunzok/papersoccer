@@ -28,6 +28,9 @@ urlpatterns = [
     re_path(r'^wirtualny/(?P<vreplay_id>\d+)/edytuj/$',  views.edit_vreplay, name='edit_vreplay'),
     re_path(r'^wirtualny/(?P<vreplay_id>\d+)/usun/$',  views.delete_vreplay, name='delete_vreplay'),
     re_path(r'^partie/katalog/(?P<directory_id>\d+)/sprawdz-wiele/$', views.manage_vreplays, name='manage_vreplays'),
+    # Training
+    re_path(r'^orlik/$',  views.training_independent, name='training_independent'),
+    re_path(r'^orlik/(?P<replay_id>\d+)/$',  views.training_dependent, name='training_dependent'),
     # Kurnik
     re_path(r'^kurnik/(?P<player_name>([a-zA-Z0-9]+))/$', views.kurnik_user, name='kurnik_user'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/$', views.kurnik_user_battles, name='kurnik_user_battles'),

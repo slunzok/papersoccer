@@ -7,7 +7,7 @@ from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 
 from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay
-from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, CheckReplayForm, BaseReplayFormSet
+from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, CheckReplayForm, BaseReplayFormSet, UserReplayForm
 
 def index(request):
     return render(request, 'schemes/index.html')
@@ -335,6 +335,45 @@ def manage_vreplays(request, directory_id):
 
     else:
         return HttpResponse("Nie jesteś właścicielem katalogu!")
+
+# Training
+
+# 01. /orlik/
+def training_independent(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            user_replay_form = UserReplayForm(request.POST)
+            if user_replay_form.is_valid():
+                user_replay = user_replay_form.save(commit=False)
+                user_replay.user = request.user
+                user_replay.save()
+                return HttpResponse("OK")
+        else:
+            return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać partie treningowe!")
+    else:
+        user_replay_form = UserReplayForm()
+
+    return render(request, 'schemes/training_independent.html', {'user_replay_form': user_replay_form})
+
+# 02. /orlik/<replay_id>/
+def training_dependent(request, replay_id):
+    replay = get_object_or_404(KurnikReplay, name=replay_id)
+
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            user_replay_form = UserReplayForm(request.POST)
+            if user_replay_form.is_valid():
+                user_replay = user_replay_form.save(commit=False)
+                user_replay.parent_replay = replay
+                user_replay.user = request.user
+                user_replay.save()
+                return HttpResponse("OK")
+        else:
+            return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać partie treningowe!")
+    else:
+        user_replay_form = UserReplayForm()
+
+    return render(request, 'schemes/training_dependent.html', {'replay': replay, 'user_replay_form': user_replay_form})
 
 # Kurnik
 

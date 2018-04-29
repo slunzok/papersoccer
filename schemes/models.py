@@ -47,6 +47,16 @@ class KurnikReplay(models.Model):
     def __str__(self):
         return self.name
 
+class UserReplay(models.Model):
+    parent_replay = models.ForeignKey(KurnikReplay, blank=True, null=True, related_name="children_kreplay", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, related_name="ureplay_owner", on_delete=models.CASCADE) 
+    replay_access = models.CharField(max_length=1, choices=REPLAY_ACCESS)
+    moves = models.TextField(max_length=2000)
+
+    def __str__(self):
+        return self.name
+
 class SchemeDirectory(models.Model):
     parent_dir = models.ForeignKey('self', blank=True, null=True, related_name="children_scheme_directory", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

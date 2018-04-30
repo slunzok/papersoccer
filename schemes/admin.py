@@ -12,13 +12,13 @@ class SchemeDirectoryAdmin(admin.ModelAdmin):
     list_display = ('parent_dir', 'name', 'user', 'scheme_access', 'scheme_type')
 
 class SchemeAdmin(admin.ModelAdmin):
-    list_display = ('directory', 'replay', 'user', 'elements', 'board')
+    list_display = ('directory', 'replay', 'ureplay', 'user', 'elements', 'board')
 
 class ReplayDirectoryAdmin(admin.ModelAdmin):
     list_display = ('parent_dir', 'name', 'user', 'replay_access')
 
 class ReplayAdmin(admin.ModelAdmin):
-    list_display = ('directory', 'replay', 'user', 'checked',)
+    list_display = ('directory', 'replay', 'ureplay', 'user', 'checked',)
 
 admin.site.register(KurnikReplay, KurnikReplayAdmin)
 admin.site.register(UserReplay, UserReplayAdmin)

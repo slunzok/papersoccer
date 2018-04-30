@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 
-from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay
+from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay
 from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, CheckReplayForm, BaseReplayFormSet, UserReplayForm
 
 def index(request):
@@ -117,7 +117,7 @@ def search_scheme(request, search_scheme):
     else:
         return HttpResponse('Opcja dostępna tylko dla zalogowanych użytkowników!')
 
-# 08A. /partia/<replay_id>/
+# 08. /partia/<replay_id>/
 def create_scheme(request, replay_id):
     replay = get_object_or_404(KurnikReplay, name=replay_id)
 
@@ -137,7 +137,7 @@ def create_scheme(request, replay_id):
 
     return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form})
 
-# 08B. /partia/<replay_id>/dodaj/
+# 09. /partia/<replay_id>/dodaj/
 def add_to_user_replay_directory(request, replay_id):
     replay = get_object_or_404(KurnikReplay, name=replay_id)
 
@@ -158,7 +158,7 @@ def add_to_user_replay_directory(request, replay_id):
     else:
         return HttpResponse('Opcja dostępna tylko dla zalogowanych użytkowników!')
 
-# 09. /schemat/<scheme_id>/
+# 10. /schemat/<scheme_id>/
 def show_scheme(request, scheme_id):
     scheme = get_object_or_404(Scheme, pk=scheme_id)
 
@@ -167,7 +167,7 @@ def show_scheme(request, scheme_id):
     else:
         return render(request, 'schemes/show_scheme.html', {'scheme': scheme})
 
-# 10. /schemat/<scheme_id>/edytuj/
+# 11. /schemat/<scheme_id>/edytuj/
 def edit_scheme(request, scheme_id):
     scheme = get_object_or_404(Scheme, pk=scheme_id)
 
@@ -185,7 +185,7 @@ def edit_scheme(request, scheme_id):
     else:
         return HttpResponse("Nie jesteś właścicielem tego schematu!")
 
-# 11. /schemat/<scheme_id>/usun/
+# 12. /schemat/<scheme_id>/usun/
 def delete_scheme(request, scheme_id):
     scheme = get_object_or_404(Scheme, pk=scheme_id)
 
@@ -375,8 +375,100 @@ def training_dependent(request, replay_id):
 
     return render(request, 'schemes/training_dependent.html', {'replay': replay, 'user_replay_form': user_replay_form})
 
+# 03. /orlik/partie/
+def custom_ureplays(request):
+    if request.user.is_authenticated:
+        ureplays = UserReplay.objects.filter(user=request.user).order_by('name')
+        return render(request, 'schemes/custom_ureplays.html', {'ureplays': ureplays})
+    else:
+        return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
+
+# 04. /orlik/partie/<username>/
+def custom_public_ureplays(request, username):
+    user = get_object_or_404(User, username=username)
+    ureplays = UserReplay.objects.filter(user=user, replay_access=2).order_by('name')
+    return render(request, 'schemes/custom_public_ureplays.html', {'user': user, 'ureplays': ureplays})
+
+# 05. /orlik/partia/<replay_id>/
+def create_scheme_from_custom_ureplay(request, replay_id):
+    ureplay = get_object_or_404(UserReplay, pk=replay_id)
+
+    if ureplay.user != request.user and ureplay.replay_access == "3":
+        return HttpResponse("Prywatna partia treningowa!")
+    else:
+        if request.method == 'POST':
+            if request.user.is_authenticated:
+                scheme_form = SchemeForm(request.POST, user_id=request.user.id)
+                if scheme_form.is_valid():
+                    scheme = scheme_form.save(commit=False)
+                    scheme.ureplay = ureplay
+                    scheme.user = request.user
+                    scheme.save()
+                    return HttpResponse("OK")
+            else:
+                return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
+        else:
+            scheme_form = SchemeForm(user_id=request.user.id)
+
+        return render(request, 'schemes/create_scheme_from_custom_ureplay.html', {'ureplay': ureplay, 'scheme_form': scheme_form})
+
+# 06. /orlik/partia/<replay>/edytuj/
+def edit_ureplay(request, replay_id):
+    ureplay = get_object_or_404(UserReplay, pk=replay_id)
+
+    if ureplay.user == request.user:
+        if request.method == 'POST':
+            ureplay_form = UserReplayForm(request.POST, instance=ureplay)
+            if ureplay_form.is_valid():
+                ureplay_form.save()
+                return HttpResponseRedirect(reverse('schemes:edit_ureplay', args=(ureplay.id,)))
+        else:
+            ureplay_form = UserReplayForm(instance=ureplay)
+
+        return render(request, 'schemes/edit_ureplay.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tej partii treningowej!")
+
+# 07. /orlik/partia/<replay>/usun/
+def delete_ureplay(request, replay_id):
+    ureplay = get_object_or_404(UserReplay, pk=replay_id)
+
+    if ureplay.user == request.user:
+        if request.method == 'POST':
+            ureplay.delete()
+            return HttpResponse("Partia treningowa usunięta!")
+        else:
+            return render(request, 'schemes/delete_ureplay.html', {'ureplay': ureplay})
+    else:
+        return HttpResponse("Nie jesteś właścicielem tej partii treningowej!")
+
+# 08. /orlik/partia/<replay_id>/dodaj/
+def add_ureplay_to_user_replay_directory(request, replay_id):
+    ureplay = get_object_or_404(UserReplay, pk=replay_id)
+
+    if ureplay.user != request.user and ureplay.replay_access == "3":
+        return HttpResponse("Prywatna partia treningowa!")
+    else:
+        if request.user.is_authenticated:
+            user_directories = ReplayDirectory.objects.filter(user=request.user)
+            if request.method == 'POST':
+                ureplay_form = ReplayForm(request.POST, user_id=request.user.id)
+                if ureplay_form.is_valid():
+                    add_replay = ureplay_form.save(commit=False)
+                    add_replay.ureplay = ureplay
+                    add_replay.user = request.user
+                    add_replay.save()
+                    return HttpResponse("OK")
+            else:
+                ureplay_form = ReplayForm(user_id=request.user.id)
+
+            return render(request, 'schemes/add_ureplay_to_user_replay_directory.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form, 'user_directories': user_directories})
+        else:
+            return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
+
 # Kurnik
 
+# 01. /kurnik/<player_name>/
 def kurnik_user(request, player_name):
     replays = KurnikReplay.objects.filter(Q(player1=player_name) | Q(player2=player_name)).order_by('name')
 
@@ -461,6 +553,7 @@ def kurnik_user(request, player_name):
     else:
         return HttpResponse('Nie znaleziono gracza!')
 
+# 02. /kurnik/<player1_name>/<player2_name>/
 def kurnik_user_battles(request, player1_name, player2_name):
     replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')
 
@@ -546,6 +639,7 @@ def kurnik_user_battles(request, player1_name, player2_name):
     else:
         return HttpResponse('Nie znaleziono gracza!')
 
+# 03. /kurnik/<player1_name>/<player2_name>/utworz-kopiuj/
 def create_and_add_vreplays(request, player1_name, player2_name):
     if request.user.is_authenticated:
         replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')
@@ -574,7 +668,7 @@ def create_and_add_vreplays(request, player1_name, player2_name):
     else:
         return HttpResponse("Tylko zalogowani użytkownicy mają dostęp do tej opcji!")
 
-
+# 04. /kurnik/<player1_name>/<player2_name>/kopiuj/
 def add_vreplays(request, player1_name, player2_name):
     if request.user.is_authenticated:
         replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')

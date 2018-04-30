@@ -29,7 +29,7 @@
 
                         {% if forloop.counter0 == forloop.parentloop.counter0 %}
 
-                            <p><label></label> {% if replay.replay != None %}<a href="{% url 'schemes:create_scheme' replay.replay.name %}" style="color: #fff;">{{ replay.replay }}.txt</a>{% endif %}</p>
+                            <p><label></label> {% if replay.replay != None %}<a href="{% url 'schemes:create_scheme' replay.replay.name %}" style="color: #fff;">{{ replay.replay }}.txt</a>{% else %}<a href="{% url 'schemes:create_scheme_from_custom_ureplay' replay.ureplay.id %}" style="color: #fff;">{{ replay.ureplay.name }}.txt</a>{% endif %}</p>
 
                         {% endif%}
 

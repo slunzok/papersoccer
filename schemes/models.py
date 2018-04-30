@@ -71,6 +71,7 @@ class SchemeDirectory(models.Model):
 class Scheme(models.Model):
     directory = models.ForeignKey(SchemeDirectory, related_name="schemes", on_delete=models.CASCADE)
     replay = models.ForeignKey(KurnikReplay, blank=True, null=True, related_name="replays", on_delete=models.CASCADE)
+    ureplay = models.ForeignKey(UserReplay, blank=True, null=True, related_name="ureplays", on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name="scheme_creator", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     elements = models.CharField(validators=[validate_comma_separated_integer_list], max_length=100)
@@ -92,6 +93,7 @@ class ReplayDirectory(models.Model):
 class Replay(models.Model):
     directory = models.ForeignKey(ReplayDirectory, related_name="vreplays", on_delete=models.CASCADE)
     replay = models.ForeignKey(KurnikReplay, blank=True, null=True, related_name="kreplays", on_delete=models.CASCADE)
+    ureplay = models.ForeignKey(UserReplay, blank=True, null=True, related_name="treplays", on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name="vreplay_owner", on_delete=models.CASCADE)
     checked = models.CharField(max_length=1, choices=REPLAY_STATUS)
 

@@ -31,6 +31,12 @@ urlpatterns = [
     # Training
     re_path(r'^orlik/$',  views.training_independent, name='training_independent'),
     re_path(r'^orlik/(?P<replay_id>\d+)/$',  views.training_dependent, name='training_dependent'),
+    re_path(r'^orlik/partie/$',  views.custom_ureplays, name='custom_ureplays'),
+    re_path(r'^orlik/partie/(?P<username>([a-zA-Z0-9_\-]+))/$',  views.custom_public_ureplays, name='custom_public_ureplays'),
+    re_path(r'^orlik/partia/(?P<replay_id>\d+)/$',  views.create_scheme_from_custom_ureplay, name='create_scheme_from_custom_ureplay'),
+    re_path(r'^orlik/partia/(?P<replay_id>\d+)/edytuj/$',  views.edit_ureplay, name='edit_ureplay'),
+    re_path(r'^orlik/partia/(?P<replay_id>\d+)/usun/$',  views.delete_ureplay, name='delete_ureplay'),
+    re_path(r'^orlik/partia/(?P<replay_id>\d+)/dodaj/$',  views.add_ureplay_to_user_replay_directory, name='add_ureplay_to_user_replay_directory'),
     # Kurnik
     re_path(r'^kurnik/(?P<player_name>([a-zA-Z0-9]+))/$', views.kurnik_user, name='kurnik_user'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/$', views.kurnik_user_battles, name='kurnik_user_battles'),

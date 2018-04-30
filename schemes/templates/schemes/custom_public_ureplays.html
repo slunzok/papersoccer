@@ -1,0 +1,44 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>{{ user.username }} - publiczne partie treningowe</h1>
+
+            <div class="body">
+
+                {% if ureplays.count == 0 %}
+
+                    <p><strong>Użytkownik nie udostępnił publicznie na razie żadnej partii treningowej!</strong></p>
+
+                {% else %}
+
+                    <table id="myTable" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable')">Dostęp</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable')">Z partii</th>
+                    </tr>
+
+                    {% for ureplay in ureplays %}
+
+                    <tr>
+                        <td><a href="{% url 'schemes:create_scheme_from_custom_ureplay' ureplay.id %}">{{ ureplay.name }}</a></td>
+                        <td>{{ ureplay.get_replay_access_display }}</td>
+                        <td>{% if ureplay.parent_replay.name == None %}---------{% else %}<a href="{% url 'schemes:create_scheme' ureplay.parent_replay.name %}">{{ ureplay.parent_replay.name }}</a>{% endif %}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </table>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

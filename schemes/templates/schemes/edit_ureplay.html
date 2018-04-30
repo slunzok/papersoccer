@@ -1,0 +1,76 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            {% comment %}
+            <!--zwykły formularz, jak w przypadku schematów i partii, ale dam możliwość wizualnej zmiany ruchów (nie przez form)-->
+            <h1><strong><a href="{% url 'schemes:custom_public_ureplays' ureplay.user %}">{{ ureplay.user }}</a> - <a href="{% url 'schemes:create_scheme_from_custom_ureplay' ureplay.id %}">{{ ureplay.name }}</a></strong></h1>
+
+            <form action="" method="POST">
+            {% csrf_token %}
+
+            {{ ureplay_form.non_field_errors }}
+
+            {% for field in ureplay_form %}
+
+            {% if field.errors %}
+
+                <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                <p><label></label> {{ field.errors.as_text }}</p>
+
+            {% else %}
+
+                <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+            {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="change_ureplay_settings" type="submit" value="Zmień ustawienia!" /></p>
+
+            </form>
+            {% endcomment %}
+
+            <h1><input class="left_button" type="button" value="mazak Gmocha" id="gmoch" onclick="setGmochMode()" /> <span id="mouse"></span> <span class="right"><input id="save_replay" type="button" value="zapisz zmiany" onclick="gmochToggleForm('save_replay_form', 'save_replay')" /> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="obróć boisko" onclick="rotate()" /><input type="button" value="tu zakończ ruch" id="cut_back_accept" onclick='manageMoves()' /></span></h1>
+
+            <form action="" method="POST" id="save_replay_form" style="display:none">
+            {% csrf_token %}
+
+            {{ ureplay_form.non_field_errors }}
+
+            {% for field in ureplay_form %}
+
+            {% if field.errors %}
+
+                <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                <p><label></label> {{ field.errors.as_text }}</p>
+
+            {% else %}
+
+                <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+            {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="change_ureplay_settings" type="submit" value="Zapisz zmiany" /></p>
+
+            </form>
+
+            <div class="board">
+                <canvas id="myCanvas" width="306" height="442"></canvas>
+                <script type="text/javascript">
+                    var moves_string = "{{ ureplay.moves }}";
+                    var moves = moves_string.split(" ");
+                </script>
+                <script type="text/javascript" src="/static/js/gmoch2.js"></script>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+

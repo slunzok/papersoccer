@@ -1,0 +1,22 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><strong><a href="{% url 'schemes:custom_public_ureplays' ureplay.user %}">{{ ureplay.user }}</a> - <a href="{% url 'schemes:create_scheme_from_custom_ureplay' ureplay.id %}">{{ ureplay.name }}</a></strong></h1>
+
+            <form action="" method="POST">
+            {% csrf_token %}
+
+            <p>Na pewno chcesz usunąc ten wirtualny plik?</p>
+
+            <p><label></label> <input name="delete_ureplay" type="submit" value="Tak, usuń partię treningową!" /></p>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+

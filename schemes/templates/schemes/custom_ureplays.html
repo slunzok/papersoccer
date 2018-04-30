@@ -1,0 +1,78 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>Partie treningowe</h1>
+
+            {% comment %}
+            <form action="" method="POST" id="add_directory_form" style="display:none">
+            {% csrf_token %}
+
+            {{ add_directory_form.non_field_errors }}
+
+            {% for field in add_directory_form %}
+
+                {% if field.errors %}
+
+                    {% if field.html_name != "parent_dir" %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                        <p><label></label> {{ field.errors.as_text }}</p>
+
+                    {% endif %}
+
+                {% else %}
+
+                    {% if field.html_name != "parent_dir" %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="create_replay_directory" type="submit" value="Utwórz katalog" /></p>
+
+            </form>
+            {% endcomment %}
+
+            <div class="body">
+
+                {% if ureplays.count == 0 %}
+
+                    <p><strong>Na razie nie dodałeś żadnych partii treningowych</strong></p>
+
+                {% else %}
+
+                    <table id="myTable" class="data-table">
+
+                    <tr>
+                        <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
+                        <th style="width: 25%" onclick="sortTable(1, 'myTable')">Dostęp</th>
+                        <th style="width: 25%" onclick="sortTable(2, 'myTable')">Z partii</th>
+                    </tr>
+
+                    {% for ureplay in ureplays %}
+
+                    <tr>
+                        <td><a href="{% url 'schemes:create_scheme_from_custom_ureplay' ureplay.id %}">{{ ureplay.name }}</a><br /><a href="{% url 'schemes:edit_ureplay' ureplay.id %}">edytuj</a> - <a href="{% url 'schemes:delete_ureplay' ureplay.id %}">usuń</a> - <a href="{% url 'schemes:add_ureplay_to_user_replay_directory' ureplay.id %}">dodaj</a></td>
+                        <td>{{ ureplay.get_replay_access_display }}</td>
+                        <td>{% if ureplay.parent_replay.name == None %}---------{% else %}<a href="{% url 'schemes:create_scheme' ureplay.parent_replay.name %}">{{ ureplay.parent_replay.name }}</a>{% endif %}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </table>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

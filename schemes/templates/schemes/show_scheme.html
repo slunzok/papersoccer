@@ -4,44 +4,136 @@
 
     <div class="item">
         <div class="content">
-            <h1><input class="left_button" type="button" value="#{{ scheme.replay.name }}" id="game" onclick="toggleForm('replay_info', 'game')" /> {% if scheme.user == request.user %} &rarr; <a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a> {% endif %}<span class="right"><input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
-            <h1 class="green" id="replay_info" style="display:none"><span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />{{ scheme.replay.replay_date }} - {{ scheme.replay.replay_time }} - {% if scheme.replay.replay_round == '60' %}1m{% elif scheme.replay.replay_round == '120'%}2m{% elif scheme.replay.replay_round == '180'%}3m{% elif scheme.replay.replay_round == '300'%}5m{% elif scheme.replay.replay_round == '420'%}7m{% elif scheme.replay.replay_round == '900'%}15m{% endif %} - Wygrał: {% if scheme.replay.result == '0-1' %}{{ scheme.replay.player2 }} {% else %} {{ scheme.replay.player1 }} {% endif %}</h1>
+            <h1><input class="left_button" type="button" value="#{% if scheme.replay != None %}{{ scheme.replay.name }}{% else %}{{ scheme.ureplay.name }}{% endif %}" id="game" onclick="toggleForm('replay_info', 'game')" /> {% if scheme.user == request.user %} &rarr; <a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a> {% endif %}<span class="right"><input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1 class="green" id="replay_info" style="display:none">{% if scheme.ureplay.parent_replay != None %}<span>Fork partii: <a href="{% url 'schemes:create_scheme' scheme.ureplay.parent_replay.name %}">{{ scheme.ureplay.parent_replay.name }}</a></span><br />{% endif %}
+            {% if scheme.replay != None %}
+                <span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />
+                {{ scheme.replay.replay_date }} - {{ scheme.replay.replay_time }} - 
+                {% if scheme.replay.replay_round == '60' %}
+                    1m
+                {% elif scheme.replay.replay_round == '120'%}
+                    2m
+                {% elif scheme.replay.replay_round == '180'%}
+                    3m
+                {% elif scheme.replay.replay_round == '300'%}
+                    5m
+                {% elif scheme.replay.replay_round == '420'%}
+                    7m
+                {% elif scheme.replay.replay_round == '900'%}
+                    15m
+                {% endif %} - 
+                Wygrał: 
+                {% if scheme.replay.result == '0-1' %}
+                    {{ scheme.replay.player2 }} 
+                {% else %} 
+                    {{ scheme.replay.player1 }} 
+                {% endif %}
+            {% else %}
+                {% if scheme.ureplay.parent_replay != None %}
+                    <span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />
+                    {{ scheme.ureplay.parent_replay.replay_date }} - {{ scheme.ureplay.parent_replay.replay_time }} - 
+                    {% if scheme.ureplay.parent_replay.replay_round == '60' %}
+                        1m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '120'%}
+                        2m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '180'%}
+                        3m
+                    {% elif scheme.ureplay.parent_replayy.replay_round == '300'%}
+                        5m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '420'%}
+                        7m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '900'%}
+                        15m
+                    {% endif %} - 
+                    Wygrał: 
+                    {% if scheme.ureplay.parent_replay.result == '0-1' %}
+                        {{ scheme.ureplay.parent_replay.player2 }} 
+                    {% else %} 
+                        {{ scheme.ureplay.parent_replay.player1 }} 
+                    {% endif %}
+                {% else %}
+                    Niezależna partia treningowa
+                {% endif %}
+            {% endif %}
+            </h1>
             <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="obróć boisko" onclick="rotate()" /></span></h1>
 
             <div class="board">
                 <canvas id="myCanvas" width="306" height="442"></canvas>
                 <script type="text/javascript">
                     var players = [];
-                    {% if scheme.replay.player2_elo|add:0 < 1200 %}
-                        players.push('{{ scheme.replay.player2 }}', 'blue', '{{ scheme.replay.player2_elo }}');
-                    {% elif scheme.replay.player2_elo|add:0 >= 1200 and scheme.replay.player2_elo|add:0 < 1500 %}
-                        players.push('{{ scheme.replay.player2 }}', 'green', '{{ scheme.replay.player2_elo }}');
-                    {% elif scheme.replay.player2_elo|add:0 >= 1500 and scheme.replay.player2_elo|add:0 < 1800 %}
-                        players.push('{{ scheme.replay.player2 }}', 'yellow', '{{ scheme.replay.player2_elo }}');
-                    {% elif scheme.replay.player2_elo|add:0 >= 1800 and scheme.replay.player2_elo|add:0 < 2100 %}
-                        players.push('{{ scheme.replay.player2 }}', 'orange', '{{ scheme.replay.player2_elo }}');
-                    {% elif scheme.replay.player2_elo|add:0 >= 2100 %}
-                        players.push('{{ scheme.replay.player2 }}', 'red', '{{ scheme.replay.player2_elo }}');
+
+                    {% if scheme.replay != None %}
+                        {% if scheme.replay.player2_elo|add:0 < 1200 %}
+                            players.push('{{ scheme.replay.player2 }}', 'blue', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 1200 and scheme.replay.player2_elo|add:0 < 1500 %}
+                            players.push('{{ scheme.replay.player2 }}', 'green', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 1500 and scheme.replay.player2_elo|add:0 < 1800 %}
+                            players.push('{{ scheme.replay.player2 }}', 'yellow', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 1800 and scheme.replay.player2_elo|add:0 < 2100 %}
+                            players.push('{{ scheme.replay.player2 }}', 'orange', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 2100 %}
+                            players.push('{{ scheme.replay.player2 }}', 'red', '{{ scheme.replay.player2_elo }}');
+                        {% endif %}
+
+                        {% if scheme.replay.player1_elo|add:0 < 1200 %}
+                            players.push('{{ scheme.replay.player1 }}', 'blue', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 1200 and scheme.replay.player1_elo|add:0 < 1500 %}
+                            players.push('{{ scheme.replay.player1 }}', 'green', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 1500 and scheme.replay.player1_elo|add:0 < 1800 %}
+                            players.push('{{ scheme.replay.player1 }}', 'yellow', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 1800 and scheme.replay.player1_elo|add:0 < 2100 %}
+                            players.push('{{ scheme.replay.player1 }}', 'orange', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 2100 %}
+                            players.push('{{ scheme.replay.player1 }}', 'red', '{{ scheme.replay.player1_elo }}');
+                        {% endif %}
+                            var show_match_info = 1;
+                    {% else %}
+                        {% if scheme.ureplay.parent_replay != None %}
+                            {% if scheme.ureplay.parent_replay.player2_elo|add:0 < 1200 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'blue', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 1200 and scheme.ureplay.parent_replay.player2_elo|add:0 < 1500 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'green', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 1500 and scheme.ureplay.parent_replay.player2_elo|add:0 < 1800 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'yellow', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 1800 and scheme.ureplay.parent_replay.player2_elo|add:0 < 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'orange', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'red', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% endif %}
+
+                            {% if scheme.ureplay.parent_replay.player1_elo|add:0 < 1200 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'blue', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 1200 and scheme.ureplay.parent_replay.player1_elo|add:0 < 1500 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'green', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 1500 and scheme.ureplay.parent_replay.player1_elo|add:0 < 1800 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'yellow', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 1800 and scheme.ureplay.parent_replay.player1_elo|add:0 < 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'orange', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'red', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% endif %}
+                            var show_match_info = 1;
+                        {% else %}
+                            var show_match_info = 0;
+                        {% endif %}
+                        
                     {% endif %}
 
-                    {% if scheme.replay.player1_elo|add:0 < 1200 %}
-                        players.push('{{ scheme.replay.player1 }}', 'blue', '{{ scheme.replay.player1_elo }}');
-                    {% elif scheme.replay.player1_elo|add:0 >= 1200 and scheme.replay.player1_elo|add:0 < 1500 %}
-                        players.push('{{ scheme.replay.player1 }}', 'green', '{{ scheme.replay.player1_elo }}');
-                    {% elif scheme.replay.player1_elo|add:0 >= 1500 and scheme.replay.player1_elo|add:0 < 1800 %}
-                        players.push('{{ scheme.replay.player1 }}', 'yellow', '{{ scheme.replay.player1_elo }}');
-                    {% elif scheme.replay.player1_elo|add:0 >= 1800 and scheme.replay.player1_elo|add:0 < 2100 %}
-                        players.push('{{ scheme.replay.player1 }}', 'orange', '{{ scheme.replay.player1_elo }}');
-                    {% elif scheme.replay.player1_elo|add:0 >= 2100 %}
-                        players.push('{{ scheme.replay.player1 }}', 'red', '{{ scheme.replay.player1_elo }}');
+                    {% if scheme.replay != None %}
+                        var moves_string = "{{ scheme.replay.moves }}";
+                    {% else %}
+                        var moves_string = "{{ scheme.ureplay.moves }}";
                     {% endif %}
-
-                    var moves_string = "{{ scheme.replay.moves }}";
                     var moves = moves_string.split(" ");
                     var elements_string = "{{ scheme.elements }}"
                     var elements = elements_string.split(",");
+
+                    {% if scheme.board == '1' %}
+                        var rotate_board = 1;
+                    {% endif %}
                 </script>
-                <script type="text/javascript" src="/static/js/scheme.js"></script>
+                <script type="text/javascript" src="/static/js/scheme2.js"></script>
             </div>
 
         </div>

@@ -7,6 +7,11 @@ from .models import BOARD_TYPE, REPLAY_ACCESS, REPLAY_STATUS
 
 from django.forms.models import BaseInlineFormSet
 
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+import re
+
 SCHEME_ACCESS = (
     ('', '---------'),
     ('2', 'publiczny'),
@@ -321,4 +326,43 @@ class UserReplayForm(forms.ModelForm):
                         raise forms.ValidationError("Możliwe ruchy: 0, 1, 2, 3, 4, 5, 6, 7")
 
         return moves
+
+class UserCreateForm(UserCreationForm):
+
+    username = forms.CharField(widget=forms.TextInput(attrs={'class' : 'scheme'}), label='Nick')
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class' : 'scheme'}), label='Hasło')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class' : 'scheme'}), label='Powtórz')
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'scheme'}), required=False, label='*Email')
+    kurnik = forms.CharField(widget=forms.TextInput(attrs={'class' : 'scheme'}), required=False, label='*Kurnik')
+
+    class Meta:
+        model = User
+        fields = ("username", "password1", "password2", "email")
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+
+        user = User.objects.filter(username=username)
+        if user:
+            raise forms.ValidationError("Nazwa użytkownika zajęta!")
+        elif not re.search(r'^([a-zA-Z0-9_\-]+)$', username):
+            raise forms.ValidationError("Wprowadź poprawną nazwę użytkownika. Może ona zawierać tylko litery, liczby i znaki: _ -")
+
+        return username
+
+    def clean_kurnik(self):
+        kurnik = self.cleaned_data['kurnik']
+
+        if kurnik != '':
+            if not re.search(r'^([a-zA-Z0-9]+)$', kurnik):
+                raise forms.ValidationError("Wprowadź poprawną nazwę użytkownika z kurnika. Może ona zawierać tylko litery i liczby.")
+
+        return kurnik
+
+    def save(self, commit=True):
+        user = super(UserCreateForm, self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
 

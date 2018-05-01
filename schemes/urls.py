@@ -42,4 +42,8 @@ urlpatterns = [
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/$', views.kurnik_user_battles, name='kurnik_user_battles'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/utworz-kopiuj/$', views.create_and_add_vreplays, name='create_and_add_vreplays'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/kopiuj/$', views.add_vreplays, name='add_vreplays'),
+    # Registration
+    re_path(r'^zarejestruj/$',  views.register_account, name='register_account'),
+    re_path(r'^zaloguj/$',  views.login_user, name='login_user'),
+    re_path(r'^wyloguj/$',  views.logout_user, name='logout_user'),
 ]

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import KurnikReplay, UserReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay
+from .models import KurnikReplay, UserReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, Profile
 
 class KurnikReplayAdmin(admin.ModelAdmin):
     list_display = ('name', 'player1', 'player2')
@@ -20,9 +20,13 @@ class ReplayDirectoryAdmin(admin.ModelAdmin):
 class ReplayAdmin(admin.ModelAdmin):
     list_display = ('directory', 'replay', 'ureplay', 'user', 'checked',)
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'kurnik_name',)
+
 admin.site.register(KurnikReplay, KurnikReplayAdmin)
 admin.site.register(UserReplay, UserReplayAdmin)
 admin.site.register(SchemeDirectory, SchemeDirectoryAdmin)
 admin.site.register(Scheme, SchemeAdmin)
 admin.site.register(ReplayDirectory, ReplayDirectoryAdmin)
 admin.site.register(Replay, ReplayAdmin)
+admin.site.register(Profile, ProfileAdmin)

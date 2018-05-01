@@ -1,0 +1,22 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>Zaloguj</h1>
+
+                <form action="" method="POST">
+                {% csrf_token %}
+
+                <p><label for="id_username">Nick:</label> <input type="text" name="username" class="scheme" autofocus required id="id_username" /></p>                <p><label for="id_password">Hasło:</label> <input type="password" name="password" class="scheme" required id="id_password" /></p>
+
+                <p><label></label> <input name="signin" type="submit" value="Zaloguj" /></p>
+
+                </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+

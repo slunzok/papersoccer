@@ -100,3 +100,10 @@ class Replay(models.Model):
     def __str__(self):
         return self.checked
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    kurnik_name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.kurnik_name
+

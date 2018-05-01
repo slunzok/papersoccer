@@ -1,0 +1,55 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><input id="save_replay" type="button" value="zarejestruj konto" onclick="gmochToggleForm('save_replay_form', 'save_replay')" /> <span id="mouse"></span> <span class="right"> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="obróć boisko" onclick="rotate()" /><input type="button" value="odblokuj boisko" id="cut_back_accept" onclick='manageMoves()' /></span></h1>
+
+            <form action="" method="POST" id="save_replay_form" style="display:none">
+            {% csrf_token %}
+
+            {{ register_user_form.non_field_errors }}
+
+            {% for field in register_user_form %}
+
+            {% if field.errors %}
+
+                <p id="{{ field.html_name }}"></p>
+                <p><label></label> {{ field.errors.as_text }}</p>
+
+            {% else %}
+
+                <p id="{{ field.html_name }}"></p>
+
+            {% endif %}
+
+            {% endfor %}
+
+            <p id="not_required"></p>
+            <p id="register_account"></p>
+
+            </form>
+
+            <div class="board">
+                <canvas id="myCanvas" width="306" height="442"></canvas>
+                <script type="text/javascript">
+                    var id = 20;
+                    var moves_string = "{{ replay }}";
+                    var moves = moves_string.split(" ");
+                    var goal = 0;
+                </script>
+                <script type="text/javascript" src="/static/js/gmoch3.js"></script>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="content">
+            <h1><span id="all_moves"></span> &nbsp; <span class="right"><input id="poss" class="possible" type="button" value="" style="display:none" /><input id="block" class="blocked" type="button" value="" style="display:none" /><input id="perm" class="permutation" type="button" value="" style="display:none" /></span></h1>
+        </div>
+    </div>
+
+{% endblock %}

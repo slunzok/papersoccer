@@ -2,12 +2,17 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+
 from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 
-from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay
-from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, CheckReplayForm, BaseReplayFormSet, UserReplayForm
+from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, Profile
+from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, \
+    CheckReplayForm, BaseReplayFormSet, UserReplayForm, UserCreateForm
+
+from random import randint
 
 def index(request):
     return render(request, 'schemes/index.html')
@@ -694,4 +699,64 @@ def add_vreplays(request, player1_name, player2_name):
             return HttpResponse("Nie znaleziono jednego z gracza, błąd.")
     else:
         return HttpResponse("Tylko zalogowani użytkownicy mają dostęp do tej opcji!")
+
+# Registration
+
+# 01. /zarejestruj/
+def register_account(request):
+    if request.user.is_authenticated:
+        return HttpResponse("Wyloguj się, jeśli chcesz zarejestrować nowe konto ;)")
+    else:
+        replay_id = randint(61000000, 62000000)
+
+        for check_replay in range(replay_id, replay_id+10):
+            get_replay = KurnikReplay.objects.get(name=check_replay)
+            if len(get_replay.moves.split()) > 20:
+                moves = get_replay.moves.split()[0:20]
+                replay = " ".join(moves)
+                break
+
+        if request.method == 'POST':
+            register_user_form = UserCreateForm(request.POST)
+            if register_user_form.is_valid():
+                register_user_form.save()
+
+                username = request.POST.get('username', '')
+                password = request.POST.get('password1', '')
+                kurnik = request.POST.get('kurnik', '')
+
+                new_user = authenticate(username=username, password=password)
+
+                p = Profile(user=new_user, kurnik_name=kurnik)
+                p.save()
+
+                login(request, new_user)
+
+                return HttpResponseRedirect(reverse('schemes:index'))
+        else:
+            register_user_form = UserCreateForm()
+
+        return render(request, 'schemes/register_account.html', {'replay': replay, 'register_user_form': register_user_form})
+
+# 02. /zaloguj/
+def login_user(request):
+    if request.user.is_authenticated:
+        return HttpResponse("Przecież jesteś już zalogowany ;)")
+    else:
+        if request.method == 'POST':
+            username = request.POST.get('username', '')
+            password = request.POST.get('password', '')
+            user = authenticate(username=username, password=password)
+            if user is not None and user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('schemes:index'))
+            else:
+                return HttpResponseRedirect(reverse('schemes:login_user'))
+
+        return render(request, 'schemes/login_user.html')
+
+# 03. /wyloguj/
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('schemes:index'))
 

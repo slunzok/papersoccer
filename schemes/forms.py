@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
 
-from .models import SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay
+from .models import SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, Entry, Comment
 #from .models import SCHEME_ACCESS, SCHEME_TYPE
 from .models import BOARD_TYPE, REPLAY_ACCESS, REPLAY_STATUS
 
@@ -365,4 +365,18 @@ class UserCreateForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class EntryForm(forms.ModelForm):
+    content = forms.CharField(widget=forms.Textarea, label='Treść')
+
+    class Meta:
+        model = Entry
+        fields = ('content',)
+
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(widget=forms.Textarea, label='Treść')
+
+    class Meta:
+        model = Comment
+        fields = ('content',)
 

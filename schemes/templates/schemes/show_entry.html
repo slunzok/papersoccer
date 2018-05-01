@@ -1,0 +1,55 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>{% if entry.user == request.user %}<a href="{% url 'schemes:edit_entry' entry.id %}">edytuj wpis</a>{% else %}Autor: {{ entry.user }}{% endif %} {% if user.is_authenticated %}<span class="right"><input type="button" value="dodaj komentarz" id="add_comment" onclick="toggleForm('add_comment_form', 'add_comment')" /></span>{% endif %}</h1>
+
+            {% if user.is_authenticated %}
+
+                <form action="" method="POST" id="add_comment_form" style="display:none">
+                {% csrf_token %}
+
+                {{ comment_form.non_field_errors }}
+
+                {% for field in comment_form %}
+
+                    {% if field.errors %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                        <p><label></label> {{ field.errors.as_text }}</p>
+
+                    {% else %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+                    {% endif %}
+
+                {% endfor %}
+
+                <p><label></label> <input name="add_comment" type="submit" value="Dodaj komentarz" /></p>
+
+                </form>
+
+            {% endif %}
+
+            <div class="body">
+
+                    <p class="microhead">{{ entry.user.username }} - {{ entry.created|date:"d.m.Y - H:i:s" }}</p> 
+                    <p class="microbody">{{ entry.content }}</p>
+                
+                    {% if entry.comments.count == 0 %}
+                        <p class="microbody"><strong>Brak komentarzy</strong></p>
+                    {% else %}
+                        <!--<p class="microbody"><strong>Komentarze: {{ entry.comments.count }}</strong></p>-->
+                        {% for comment in entry.comments.all %}
+                            <p class="microhead">{{ comment.user.username }} - {{ comment.created|date:"d.m.Y - H:i:s" }}</p> 
+                            <p class="microbody">{{ comment.content }}{% if comment.user == request.user %}<br /> &rarr;  <a href="{% url 'schemes:edit_comment' comment.id %}">edytuj komentarz</a>{% endif %}</p>
+                        {% endfor %}
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -250,6 +250,10 @@ span#move, span#schemeElements{
  color: #d8e000; font-weight: bold;
 }
 
+span.custom {
+    color: #000000;
+}
+
 .item .body {padding: 10px 16px; text-align: justify;}
 .item .board {padding: 0px 16px; background: #308048; border-right: 1px solid #567300;}
 
@@ -303,4 +307,20 @@ table.data-table td {
     padding-left: 10px;
 }
 table.data-table tr.even td {background: #FCFCFC;}
+
+p.microhead {
+    background: #81AC00;
+    border: 1px solid #DDD;
+    color: #FFF;
+    font-weight: bold;
+    padding: 7px 10px;
+}
+
+p.microbody {
+    background: #FCFCFC;
+    border: 1px solid #DDD;
+    padding: 10px;
+    margin-bottom: 15px;
+    line-height: 18px;
+}
 

@@ -107,3 +107,20 @@ class Profile(models.Model):
     def __str__(self):
         return self.kurnik_name
 
+class Entry(models.Model):
+    user = models.ForeignKey(User, related_name="entry_author", on_delete=models.CASCADE)
+    content = models.TextField(max_length=5000)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.content
+
+class Comment(models.Model):
+    entry = models.ForeignKey(Entry, related_name="comments", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="comment_author", on_delete=models.CASCADE)
+    content = models.TextField(max_length=5000)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.content
+

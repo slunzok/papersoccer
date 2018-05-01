@@ -4,11 +4,24 @@
 
     <div class="item">
         <div class="content">
-            <h1>strona główna</h1>
-            <div class="body">
-                <p>Aliquam risus justo, mollis in, laoreet a, consectetuer nec, risus. Nunc blandit sodales lacus. Nam luctus semper mi. In eu diam. Phasellus rutrum elit vel nisi. Cras mauris nulla, egestas quis, cursus at, venenatis ac, ante. Fusce accumsan enim et arcu. Duis sagittis libero at lacus. Suspendisse lacinia nulla eget urna.</p>
+            <h1>Wejście główne <span class="right">Online: <a href="{% url 'schemes:online_users' %}">{{ online_users }} użytkowników</a> &nbsp;</span></h1>
 
-                <p>In hac habitasse platea dictumst. Duis porttitor. Sed vulputate elementum nisl. Vivamus et mi at arcu mattis iaculis. Nullam posuere tristique tortor. In bibendum. Aenean ornare, nunc eget pretium porttitor, sem est pretium leo, non euismod nulla dui non diam. Pellentesque dictum faucibus leo. Vestibulum ac ante. Sed in est. Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus. Fusce eleifend, dui ut posuere auctor, justo elit posuere sapien, at blandit enim quam fringilla mi.</p>
+            <div class="body">
+                {% for entry in last_entries %}
+                    <p class="microhead">{{ entry.user.username }} - {{ entry.created|date:"d.m.Y - H:i:s" }}</p> 
+                    <p class="microbody">{{ entry.content|truncatewords:50 }}<br /> &rarr; <a href="{% url 'schemes:show_entry' entry.id %}">{{ entry.comments.count }} komentarzy</a> {% if entry.user == request.user %} - <a href="">edytuj wpis</a>{% endif %}</p>
+                {% endfor %}
+                    <p>&nbsp; <span class="custom">
+                    {% if is_paginated %}
+                        {% if last_entries.has_previous %}
+                            <a href="?page={{ last_entries.previous_page_number }}">poprzednia</a>
+                        {% endif %}
+                            Strona {{ last_entries.number }} z {{ last_entries.paginator.num_pages }}
+                        {% if last_entries.has_next %}
+                            <a href="?page={{ last_entries.next_page_number }}">następna</a>
+                        {% endif %}
+                    {% endif %}
+                    </span></p>
             </div>
         </div>
     </div>

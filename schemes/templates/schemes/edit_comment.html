@@ -1,0 +1,36 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1><a href="{% url 'schemes:show_entry' comment.entry.id %}">Pokaż wpis</a></h1>
+
+                <form action="" method="POST">
+                {% csrf_token %}
+
+                {{ comment_form.non_field_errors }}
+
+                {% for field in comment_form %}
+
+                    {% if field.errors %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                        <p><label></label> {{ field.errors.as_text }}</p>
+
+                    {% else %}
+
+                        <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+                    {% endif %}
+
+                {% endfor %}
+
+                <p><label></label> <input name="add_comment" type="submit" value="Edytuj wpis" /></p>
+
+                </form>
+
+        </div>
+    </div>
+
+{% endblock %}

@@ -4,18 +4,41 @@ from django.urls import reverse
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 
-from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, Profile
+from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, \
+    Profile, Entry, Comment
 from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, \
-    CheckReplayForm, BaseReplayFormSet, UserReplayForm, UserCreateForm
+    CheckReplayForm, BaseReplayFormSet, UserReplayForm, UserCreateForm, EntryForm, CommentForm
 
 from random import randint
+from django.utils import timezone
+from datetime import timedelta
 
 def index(request):
-    return render(request, 'schemes/index.html')
+    papersoccer = User.objects.get(username="papersoccer")
+    all_entries = Entry.objects.filter(user=papersoccer).order_by('-created')
+    paginator = Paginator(all_entries, 2)
+  
+    page = request.GET.get('page')
+    try:
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        entries = paginator.page(1)
+    except EmptyPage:
+        entries = paginator.page(paginator.num_pages)
+    is_paged = paginator.num_pages > 1
+
+    online_users = User.objects.filter(last_login__range=(timezone.now()-timedelta(days=1), timezone.now())).count()
+
+    return render(request, 'schemes/index.html', {'last_entries': entries, 'is_paginated' : is_paged, 'online_users': online_users})
+
+def online_users(request):
+    online_users = User.objects.filter(last_login__range=(timezone.now()-timedelta(days=1), timezone.now())).order_by('-last_login')
+    return render(request, 'schemes/online_users.html', {'online_users': online_users})
 
 # Schemes
 
@@ -759,4 +782,89 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect(reverse('schemes:index'))
+
+# Microblog
+
+# 01. /trybuna/
+def microblog(request):
+    all_entries = Entry.objects.all().order_by('-created')
+    paginator = Paginator(all_entries, 2)
+  
+    page = request.GET.get('page')
+    try:
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        entries = paginator.page(1)
+    except EmptyPage:
+        entries = paginator.page(paginator.num_pages)
+    is_paged = paginator.num_pages > 1
+
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            entry_form = EntryForm(request.POST)
+            if entry_form.is_valid():
+                entry = entry_form.save(commit=False)
+                entry.user = request.user
+                entry.save()
+                return HttpResponseRedirect(reverse('schemes:microblog'))
+        else:
+            entry_form = EntryForm()
+
+        return render(request, 'schemes/microblog.html', {'entry_form': entry_form, 'last_entries': entries, 'is_paginated' : is_paged})
+    else:
+        return render(request, 'schemes/microblog.html', {'last_entries': entries, 'is_paginated' : is_paged})
+
+# 02. /trybuna/wpis/<entry_id>/
+def show_entry(request, entry_id):
+    entry = get_object_or_404(Entry, pk=entry_id)
+
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.entry = entry
+                comment.user = request.user
+                comment.save()
+                return HttpResponseRedirect(reverse('schemes:show_entry', args=(entry.id,)))
+        else:
+            comment_form = CommentForm()
+
+        return render(request, 'schemes/show_entry.html', {'entry': entry, 'comment_form': comment_form})
+    else:
+        return render(request, 'schemes/show_entry.html', {'entry': entry})
+
+# 03. /trybuna/wpis/<entry_id>/edytuj/
+def edit_entry(request, entry_id):
+    entry = get_object_or_404(Entry, pk=entry_id)
+
+    if entry.user == request.user:
+        if request.method == 'POST':
+            entry_form = EntryForm(request.POST, instance=entry)
+            if entry_form.is_valid():
+                entry_form.save()
+                return HttpResponseRedirect(reverse('schemes:show_entry', args=(entry.id,)))
+        else:
+            entry_form = EntryForm(instance=entry)
+
+        return render(request, 'schemes/edit_entry.html', {'entry': entry, 'entry_form': entry_form})
+    else:
+        return HttpResponse("Nie jesteś autorem wpisu!")
+
+# 04. /trybuna/komentarz/<comment_id>/edytuj/
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+
+    if comment.user == request.user:
+        if request.method == 'POST':
+            comment_form = CommentForm(request.POST, instance=comment)
+            if comment_form.is_valid():
+                comment_form.save()
+                return HttpResponseRedirect(reverse('schemes:show_entry', args=(comment.entry.id,)))
+        else:
+            comment_form = CommentForm(instance=comment)
+
+        return render(request, 'schemes/edit_comment.html', {'comment': comment, 'comment_form': comment_form})
+    else:
+        return HttpResponse("Nie jesteś autorem komentarza!")
 

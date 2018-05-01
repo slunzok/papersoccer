@@ -1,0 +1,17 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>{{ online_users.count }} użytkowników w ciągu ostatnich 24 godzin</h1>
+
+            <div class="body">
+                {% for online_user in online_users %}
+                    <p class="microbody">{{ online_user.last_login|date:"d.m.Y - H:i:s" }} - <strong>{{ online_user.username }}</strong></p> 
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

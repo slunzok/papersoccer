@@ -6,6 +6,7 @@ app_name = 'schemes'
 
 urlpatterns = [
     re_path(r'^$', views.index, name='index'),
+    re_path(r'^online/$',  views.online_users, name='online_users'),
     # Schemes
     re_path(r'^schematy/$',  views.user_scheme_directories, name='user_scheme_directories'),
     re_path(r'^schematy/(?P<username>([a-zA-Z0-9_\-]+))/$',  views.user_public_scheme_directories, name='user_public_scheme_directories'),
@@ -46,4 +47,9 @@ urlpatterns = [
     re_path(r'^zarejestruj/$',  views.register_account, name='register_account'),
     re_path(r'^zaloguj/$',  views.login_user, name='login_user'),
     re_path(r'^wyloguj/$',  views.logout_user, name='logout_user'),
+    # Microblog
+    re_path(r'^trybuna/$',  views.microblog, name='microblog'),
+    re_path(r'^trybuna/wpis/(?P<entry_id>\d+)/$',  views.show_entry, name='show_entry'),
+    re_path(r'^trybuna/wpis/(?P<entry_id>\d+)/edytuj/$',  views.edit_entry, name='edit_entry'),
+    re_path(r'^trybuna/komentarz/(?P<comment_id>\d+)/edytuj/$',  views.edit_comment, name='edit_comment'),
 ]

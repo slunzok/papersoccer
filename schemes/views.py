@@ -10,20 +10,22 @@ from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 
 from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, \
-    Profile, Entry, Comment
+    Profile, Entry, Comment, Notification
 from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, \
-    CheckReplayForm, BaseReplayFormSet, UserReplayForm, UserCreateForm, EntryForm, CommentForm
+    CheckReplayForm, BaseReplayFormSet, UserReplayForm, UserCreateForm, EntryForm, CommentForm, \
+    UserChangePasswordForm, UserEditProfileForm
 
 from random import randint
 from django.utils import timezone
 from datetime import timedelta
+import re
 
 def index(request):
     papersoccer = User.objects.get(username="papersoccer")
     all_entries = Entry.objects.filter(user=papersoccer).order_by('-created')
     paginator = Paginator(all_entries, 2)
   
-    page = request.GET.get('page')
+    page = request.GET.get('strona')
     try:
         entries = paginator.page(page)
     except PageNotAnInteger:
@@ -57,6 +59,10 @@ def user_scheme_directories(request):
                 return HttpResponseRedirect(reverse('schemes:show_scheme_directory', args=(add_directory.id,)))
         else:
             add_directory_form = SchemeDirectoryForm(user_id=request.user)
+
+        update_last_login = User.objects.get(username=request.user)
+        update_last_login.last_login = timezone.now()
+        update_last_login.save()
 
         return render(request, 'schemes/user_scheme_directories.html', {'directories': directories, 'schemes': schemes, 'add_directory_form': add_directory_form})
 
@@ -242,6 +248,10 @@ def user_replay_directories(request):
                 return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_directory.id,)))
         else:
             add_directory_form = ReplayDirectoryForm(user_id=request.user)
+
+        update_last_login = User.objects.get(username=request.user)
+        update_last_login.last_login = timezone.now()
+        update_last_login.save()
 
         return render(request, 'schemes/user_replay_directories.html', {'directories': directories, 'add_directory_form': add_directory_form})
 
@@ -790,7 +800,7 @@ def microblog(request):
     all_entries = Entry.objects.all().order_by('-created')
     paginator = Paginator(all_entries, 2)
   
-    page = request.GET.get('page')
+    page = request.GET.get('strona')
     try:
         entries = paginator.page(page)
     except PageNotAnInteger:
@@ -806,9 +816,25 @@ def microblog(request):
                 entry = entry_form.save(commit=False)
                 entry.user = request.user
                 entry.save()
+
+                find_users = re.findall(r'@([a-zA-Z0-9_\-]+)', entry.content)
+                for check_user in find_users:
+                    try:
+                        notificated_user = User.objects.get(username=check_user)
+                    except ObjectDoesNotExist: 
+                        notificated_user = '0'
+
+                    if notificated_user != '0':
+                        add_notification = Notification(sender=request.user, receiver=notificated_user, entry=entry)
+                        add_notification.save()
+
                 return HttpResponseRedirect(reverse('schemes:microblog'))
         else:
             entry_form = EntryForm()
+
+        update_last_login = User.objects.get(username=request.user)
+        update_last_login.last_login = timezone.now()
+        update_last_login.save()
 
         return render(request, 'schemes/microblog.html', {'entry_form': entry_form, 'last_entries': entries, 'is_paginated' : is_paged})
     else:
@@ -826,6 +852,18 @@ def show_entry(request, entry_id):
                 comment.entry = entry
                 comment.user = request.user
                 comment.save()
+
+                find_users = re.findall(r'@([a-zA-Z0-9_\-]+)', comment.content)
+                for check_user in find_users:
+                    try:
+                        notificated_user = User.objects.get(username=check_user)
+                    except ObjectDoesNotExist: 
+                        notificated_user = '0'
+
+                    if notificated_user != '0':
+                        add_notification = Notification(sender=request.user, receiver=notificated_user, entry=entry)
+                        add_notification.save()
+
                 return HttpResponseRedirect(reverse('schemes:show_entry', args=(entry.id,)))
         else:
             comment_form = CommentForm()
@@ -867,4 +905,75 @@ def edit_comment(request, comment_id):
         return render(request, 'schemes/edit_comment.html', {'comment': comment, 'comment_form': comment_form})
     else:
         return HttpResponse("Nie jesteś autorem komentarza!")
+
+# 05. /powiadomienia/
+def show_notifications(request):
+    if request.user.is_authenticated:
+        new_notifications = Notification.objects.filter(receiver=request.user, created__gt=request.user.profile.notifications).order_by('-created')
+        old_notifications = Notification.objects.filter(receiver=request.user, created__range=(request.user.profile.notifications-timedelta(days=14), request.user.profile.notifications)).order_by('-created')
+
+        update_notifications = Profile.objects.get(user=request.user)
+        update_notifications.notifications = timezone.now()
+        update_notifications.save()
+
+        update_last_login = User.objects.get(username=request.user)
+        update_last_login.last_login = timezone.now()
+        update_last_login.save()
+
+        paginator = Paginator(old_notifications, 2)
+      
+        page = request.GET.get('strona')
+        try:
+            notifications = paginator.page(page)
+        except PageNotAnInteger:
+            notifications = paginator.page(1)
+        except EmptyPage:
+            notifications = paginator.page(paginator.num_pages)
+        is_paged = paginator.num_pages > 1
+
+        return render(request, 'schemes/show_notifications.html', {'new_notifications': new_notifications, 'notifications': notifications, 'is_paginated' : is_paged})
+
+    else:
+        return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
+
+# User profile/settings
+
+# 01. /kibic/<username>/
+def show_user_profile(request, username):
+    user_profile = get_object_or_404(User, username=username)
+    return render(request, 'schemes/show_user_profile.html', {'user_profile': user_profile})
+
+# 02. /zmien-haslo/
+def change_password(request):
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user)
+        if request.method == 'POST':
+            change_password_form = UserChangePasswordForm(request.POST, instance=user)
+            if change_password_form.is_valid():
+                change_password = change_password_form.save(commit=False)
+                change_password.set_password(request.POST.get('password', ''))
+                change_password.save()
+                return HttpResponseRedirect(reverse('schemes:login_user'))
+        else:
+            change_password_form = UserChangePasswordForm(instance=user)
+
+        return render(request, 'schemes/change_password.html', {'change_password_form': change_password_form})
+    else:
+        return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
+
+# 03. /edytuj-profil/
+def edit_user_profile(request):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user=request.user)
+        if request.method == 'POST':
+            edit_profile_form = UserEditProfileForm(request.POST, instance=profile)
+            if edit_profile_form.is_valid():
+                edit_profile_form.save()
+                return HttpResponseRedirect(reverse('schemes:show_user_profile', args=(request.user.username,)))
+        else:
+            edit_profile_form = UserEditProfileForm(instance=profile)
+
+        return render(request, 'schemes/edit_user_profile.html', {'edit_profile_form': edit_profile_form})
+    else:
+        return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
 

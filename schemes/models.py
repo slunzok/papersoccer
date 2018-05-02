@@ -103,6 +103,7 @@ class Replay(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     kurnik_name = models.CharField(max_length=20)
+    notifications = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.kurnik_name
@@ -123,4 +124,13 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+class Notification(models.Model):
+    sender = models.ForeignKey(User, related_name="sender_user", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="receiver_user", on_delete=models.CASCADE)
+    entry = models.ForeignKey(Entry, related_name="notifications", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.created)
 

@@ -36,8 +36,9 @@
 
             <div class="body">
 
+                    {% load link_to_user_profile %}
                     <p class="microhead">{{ entry.user.username }} - {{ entry.created|date:"d.m.Y - H:i:s" }}</p> 
-                    <p class="microbody">{{ entry.content }}</p>
+                    <p class="microbody">{{ entry.content|profil_link|linebreaksbr }}</p>
                 
                     {% if entry.comments.count == 0 %}
                         <p class="microbody"><strong>Brak komentarzy</strong></p>
@@ -45,7 +46,7 @@
                         <!--<p class="microbody"><strong>Komentarze: {{ entry.comments.count }}</strong></p>-->
                         {% for comment in entry.comments.all %}
                             <p class="microhead">{{ comment.user.username }} - {{ comment.created|date:"d.m.Y - H:i:s" }}</p> 
-                            <p class="microbody">{{ comment.content }}{% if comment.user == request.user %}<br /> &rarr;  <a href="{% url 'schemes:edit_comment' comment.id %}">edytuj komentarz</a>{% endif %}</p>
+                            <p class="microbody">{{ comment.content|profil_link|linebreaksbr }}{% if comment.user == request.user %}<br /> &rarr;  <a href="{% url 'schemes:edit_comment' comment.id %}">edytuj komentarz</a>{% endif %}</p>
                         {% endfor %}
                     {% endif %}
             </div>

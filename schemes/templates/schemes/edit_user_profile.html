@@ -1,0 +1,37 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>Edycja profilu</h1>
+
+            <form action="" method="POST">
+            {% csrf_token %}
+
+            {{ edit_profile_form.non_field_errors }}
+
+            {% for field in edit_profile_form %}
+
+            {% if field.errors %}
+
+                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                    <p><label></label> {{ field.errors.as_text }}</p>
+
+            {% else %}
+
+                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+
+            {% endif %}
+
+            {% endfor %}
+
+            <p><label></label> <input name="edit_user_profile" type="submit" value="Zaktualizuj profil!" /></p>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+

@@ -14,11 +14,11 @@
                     <p>&nbsp; <span class="custom">
                     {% if is_paginated %}
                         {% if last_entries.has_previous %}
-                            <a href="?page={{ last_entries.previous_page_number }}">poprzednia</a>
+                            <a href="?strona={{ last_entries.previous_page_number }}">poprzednia</a>
                         {% endif %}
                             Strona {{ last_entries.number }} z {{ last_entries.paginator.num_pages }}
                         {% if last_entries.has_next %}
-                            <a href="?page={{ last_entries.next_page_number }}">następna</a>
+                            <a href="?strona={{ last_entries.next_page_number }}">następna</a>
                         {% endif %}
                     {% endif %}
                     </span></p>

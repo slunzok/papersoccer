@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
 
-from .models import SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, Entry, Comment
+from .models import SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, Entry, Comment, Profile
 #from .models import SCHEME_ACCESS, SCHEME_TYPE
 from .models import BOARD_TYPE, REPLAY_ACCESS, REPLAY_STATUS
 
@@ -328,7 +328,6 @@ class UserReplayForm(forms.ModelForm):
         return moves
 
 class UserCreateForm(UserCreationForm):
-
     username = forms.CharField(widget=forms.TextInput(attrs={'class' : 'scheme'}), label='Nick')
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class' : 'scheme'}), label='Hasło')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class' : 'scheme'}), label='Powtórz')
@@ -354,8 +353,8 @@ class UserCreateForm(UserCreationForm):
         kurnik = self.cleaned_data['kurnik']
 
         if kurnik != '':
-            if not re.search(r'^([a-zA-Z0-9]+)$', kurnik):
-                raise forms.ValidationError("Wprowadź poprawną nazwę użytkownika z kurnika. Może ona zawierać tylko litery i liczby.")
+            if not re.search(r'^([a-zA-Z0-9\,\s]+)$', kurnik):
+                raise forms.ValidationError("Wprowadź poprawną nazwę użytkownika z kurnika. Może ona zawierać tylko litery, liczby, przecinek i spacje.")
 
         return kurnik
 
@@ -379,4 +378,35 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('content',)
+
+class UserChangePasswordForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class' : 'scheme'}), label='Hasło')
+
+    class Meta:
+        model = User
+        fields = ('password',)
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+
+        if not re.search(r'^([a-zA-Z0-9]+)$', password):
+            raise forms.ValidationError("Hasło może zawierać tylko litery i liczby.")
+
+        return password
+
+class UserEditProfileForm(forms.ModelForm):
+    kurnik_name = forms.CharField(widget=forms.Textarea, label='Kurnik')
+
+    class Meta:
+        model = Profile
+        fields = ('kurnik_name',)
+
+    def clean_kurnik_name(self):
+        kurnik_name = self.cleaned_data['kurnik_name']
+
+        if kurnik_name != '':
+            if not re.search(r'^([a-zA-Z0-9\,\s]+)$', kurnik_name):
+                raise forms.ValidationError("Wprowadź poprawną nazwę użytkownika z kurnika. Może ona zawierać tylko litery, liczby, przecinek i spacje.")
+
+        return kurnik_name
 

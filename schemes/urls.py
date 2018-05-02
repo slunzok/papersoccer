@@ -52,4 +52,9 @@ urlpatterns = [
     re_path(r'^trybuna/wpis/(?P<entry_id>\d+)/$',  views.show_entry, name='show_entry'),
     re_path(r'^trybuna/wpis/(?P<entry_id>\d+)/edytuj/$',  views.edit_entry, name='edit_entry'),
     re_path(r'^trybuna/komentarz/(?P<comment_id>\d+)/edytuj/$',  views.edit_comment, name='edit_comment'),
+    re_path(r'^powiadomienia/$',  views.show_notifications, name='show_notifications'),
+    # User profile/settings
+    re_path(r'^kibic/(?P<username>([a-zA-Z0-9_\-]+))/$',  views.show_user_profile, name='show_user_profile'),
+    re_path(r'^zmien-haslo/$',  views.change_password, name='change_password'),
+    re_path(r'^edytuj-profil/$',  views.edit_user_profile, name='edit_user_profile'),
 ]

@@ -35,18 +35,19 @@
             {% endif %}
 
             <div class="body">
+                {% load link_to_user_profile %}
                 {% for entry in last_entries %}
                     <p class="microhead">{{ entry.user.username }} - {{ entry.created|date:"d.m.Y - H:i:s" }}</p> 
-                    <p class="microbody">{{ entry.content|truncatewords:50 }}<br /> &rarr; <a href="{% url 'schemes:show_entry' entry.id %}">{{ entry.comments.count }} komentarzy</a> {% if entry.user == request.user %} - <a href="{% url 'schemes:edit_entry' entry.id %}">edytuj wpis</a>{% endif %}</p>
+                    <p class="microbody">{{ entry.content|profil_link|linebreaksbr|truncatewords:50 }}<br /> &rarr; <a href="{% url 'schemes:show_entry' entry.id %}">{{ entry.comments.count }} komentarzy</a> {% if entry.user == request.user %} - <a href="{% url 'schemes:edit_entry' entry.id %}">edytuj wpis</a>{% endif %}</p>
                 {% endfor %}
                     <p>&nbsp; <span class="custom">
                     {% if is_paginated %}
                         {% if last_entries.has_previous %}
-                            <a href="?page={{ last_entries.previous_page_number }}">poprzednia</a>
+                            <a href="?strona={{ last_entries.previous_page_number }}">poprzednia</a>
                         {% endif %}
                             Strona {{ last_entries.number }} z {{ last_entries.paginator.num_pages }}
                         {% if last_entries.has_next %}
-                            <a href="?page={{ last_entries.next_page_number }}">następna</a>
+                            <a href="?strona={{ last_entries.next_page_number }}">następna</a>
                         {% endif %}
                     {% endif %}
                     </span></p>

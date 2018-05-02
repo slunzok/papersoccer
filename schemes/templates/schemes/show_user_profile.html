@@ -1,0 +1,29 @@
+{% extends "schemes/base.html" %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>@{{ user_profile.username }} {% if request.user == user_profile %}<span class="right"><a href="{% url 'schemes:change_password' %}">zmień hasło</a> - <a href="{% url 'schemes:edit_user_profile' %}">edytuj profil</a> &nbsp; </span>{% endif %}</h1>
+
+            <div class="body">
+
+                <p class="microhead">Ostatnio online: {{ user_profile.last_login|date:"d.m.Y - H:i:s" }}</p>
+                <p class="microbody"><strong>Dołączył:</strong> {{ user_profile.date_joined|date:"d.m.Y - H:i:s" }}</p>
+
+
+                <p class="microhead">Schematy/analiza partii</p>
+                <p class="microbody">Schematów: <strong>{{ user_profile.scheme_creator.count }}</strong> (zobacz <a href="{% url 'schemes:user_public_scheme_directories' user_profile.username %}">publiczny katalog</a>)<br />
+                    Partie do analizy: <strong>{{ user_profile.vreplay_owner.count }}</strong> (zobacz <a href="{% url 'schemes:user_public_replay_directories' user_profile.username %}">publiczny katalog</a>)<br />
+                    Partie treningowe: <strong>{{ user_profile.ureplay_owner.count }}</strong> (zobacz <a href="{% url 'schemes:custom_public_ureplays' user_profile.username %}">publiczny katalog</a>)</p>
+
+                <p class="microhead">Trybuna</p>
+                <p class="microbody">Dodanych wpisów: <strong>{{ user_profile.entry_author.count }}</strong><br />
+                    Dodanych komentarzy: <strong>{{ user_profile.comment_author.count }}</strong></p>
+
+                {% if user_profile.profile.kurnik_name != '' %}<p class="microhead">Konta na kurniku: {{ user_profile.profile.kurnik_name }}</p>{% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -132,7 +132,7 @@ def delete_scheme_directory(request, directory_id):
     if directory.user == request.user:
         if request.method == 'POST':
             directory.delete()
-            return HttpResponse("Katalog (wraz z podkatalogami i schematami) usunięty!")
+            return HttpResponseRedirect(reverse('schemes:user_scheme_directories'))
         else:
             return render(request, 'schemes/delete_scheme_directory.html', {'directory': directory})
     else:
@@ -163,11 +163,11 @@ def create_scheme(request, replay_id):
                 scheme.replay = replay
                 scheme.user = request.user
                 scheme.save()
-                return HttpResponse("OK")
+                return HttpResponseRedirect(reverse('schemes:show_scheme', args=(scheme.id,)))
         else:
             return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
     else:
-        scheme_form = SchemeForm(user_id=request.user.id)
+        scheme_form = SchemeForm(user_id=request.user.id, initial={'name': replay.name})
 
     return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form})
 
@@ -184,9 +184,9 @@ def add_to_user_replay_directory(request, replay_id):
                 add_replay.replay = replay
                 add_replay.user = request.user
                 add_replay.save()
-                return HttpResponse("OK")
+                return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_replay.directory.id,)))
         else:
-            replay_form = ReplayForm(user_id=request.user.id)
+            replay_form = ReplayForm(user_id=request.user.id, initial={'name': replay.name})
 
         return render(request, 'schemes/add_replay.html', {'replay': replay, 'replay_form': replay_form, 'user_directories': user_directories})
     else:
@@ -226,7 +226,7 @@ def delete_scheme(request, scheme_id):
     if scheme.user == request.user:
         if request.method == 'POST':
             scheme.delete()
-            return HttpResponse("Schemat usunięty!")
+            return HttpResponseRedirect(reverse('schemes:show_scheme_directory', args=(scheme.directory.id,)))
         else:
             return render(request, 'schemes/delete_scheme.html', {'scheme': scheme})
     else:
@@ -314,7 +314,7 @@ def delete_replay_directory(request, directory_id):
     if directory.user == request.user:
         if request.method == 'POST':
             directory.delete()
-            return HttpResponse("Katalog (wraz z podkatalogami i schematami) usunięty!")
+            return HttpResponseRedirect(reverse('schemes:user_replay_directories'))
         else:
             return render(request, 'schemes/delete_replay_directory.html', {'directory': directory})
     else:
@@ -345,7 +345,7 @@ def delete_vreplay(request, vreplay_id):
     if vreplay.user == request.user:
         if request.method == 'POST':
             vreplay.delete()
-            return HttpResponse("vreplay usunięty!")
+            return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(vreplay.directory.id,)))
         else:
             return render(request, 'schemes/delete_vreplay.html', {'vreplay': vreplay})
     else:
@@ -365,7 +365,7 @@ def manage_vreplays(request, directory_id):
                         #form.save()
 
                 replays_formset.save()
-                return HttpResponseRedirect(reverse('schemes:manage_vreplays', args=(directory.id,)))
+                return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(directory.id,)))
         else:
             replays_formset = ReplaysFormSet(instance=directory)
 
@@ -385,7 +385,7 @@ def training_independent(request):
                 user_replay = user_replay_form.save(commit=False)
                 user_replay.user = request.user
                 user_replay.save()
-                return HttpResponse("OK")
+                return HttpResponseRedirect(reverse('schemes:custom_ureplays'))
         else:
             return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać partie treningowe!")
     else:
@@ -405,7 +405,7 @@ def training_dependent(request, replay_id):
                 user_replay.parent_replay = replay
                 user_replay.user = request.user
                 user_replay.save()
-                return HttpResponse("OK")
+                return HttpResponseRedirect(reverse('schemes:custom_ureplays'))
         else:
             return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać partie treningowe!")
     else:
@@ -442,11 +442,11 @@ def create_scheme_from_custom_ureplay(request, replay_id):
                     scheme.ureplay = ureplay
                     scheme.user = request.user
                     scheme.save()
-                    return HttpResponse("OK")
+                    return HttpResponseRedirect(reverse('schemes:show_scheme', args=(scheme.id,)))
             else:
                 return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
         else:
-            scheme_form = SchemeForm(user_id=request.user.id)
+            scheme_form = SchemeForm(user_id=request.user.id, initial={'name': ureplay.name})
 
         return render(request, 'schemes/create_scheme_from_custom_ureplay.html', {'ureplay': ureplay, 'scheme_form': scheme_form})
 
@@ -474,7 +474,7 @@ def delete_ureplay(request, replay_id):
     if ureplay.user == request.user:
         if request.method == 'POST':
             ureplay.delete()
-            return HttpResponse("Partia treningowa usunięta!")
+            return HttpResponseRedirect(reverse('schemes:custom_ureplays'))
         else:
             return render(request, 'schemes/delete_ureplay.html', {'ureplay': ureplay})
     else:
@@ -496,9 +496,9 @@ def add_ureplay_to_user_replay_directory(request, replay_id):
                     add_replay.ureplay = ureplay
                     add_replay.user = request.user
                     add_replay.save()
-                    return HttpResponse("OK")
+                    return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_replay.directory.id,)))
             else:
-                ureplay_form = ReplayForm(user_id=request.user.id)
+                ureplay_form = ReplayForm(user_id=request.user.id, initial={'name': ureplay.name})
 
             return render(request, 'schemes/add_ureplay_to_user_replay_directory.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form, 'user_directories': user_directories})
         else:
@@ -693,7 +693,7 @@ def create_and_add_vreplays(request, player1_name, player2_name):
                     add_directory.save()
 
                     for replay in replays:
-                        add_vreplay = Replay(directory=add_directory, replay=replay, user=request.user, checked="0")
+                        add_vreplay = Replay(directory=add_directory, replay=replay, user=request.user, name=replay.name, checked="0")
                         add_vreplay.save()
 
                     return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_directory.id,)))
@@ -720,7 +720,7 @@ def add_vreplays(request, player1_name, player2_name):
                     replay_directory = ReplayDirectory.objects.get(pk=request.POST.get('directory', '1'))
 
                     for replay in replays:
-                        add_vreplay = Replay(directory=replay_directory, replay=replay, user=request.user, checked=request.POST.get('checked', '0'))
+                        add_vreplay = Replay(directory=replay_directory, replay=replay, user=request.user, name=replay.name, checked=request.POST.get('checked', '0'))
                         add_vreplay.save()
 
                     return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(replay_directory.id,)))
@@ -765,7 +765,7 @@ def register_account(request):
 
                 login(request, new_user)
 
-                return HttpResponseRedirect(reverse('schemes:index'))
+                return HttpResponseRedirect(reverse('schemes:user_scheme_directories'))
         else:
             register_user_form = UserCreateForm()
 
@@ -782,7 +782,7 @@ def login_user(request):
             user = authenticate(username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('schemes:index'))
+                return HttpResponseRedirect(reverse('schemes:user_scheme_directories'))
             else:
                 return HttpResponseRedirect(reverse('schemes:login_user'))
 
@@ -828,7 +828,7 @@ def microblog(request):
                         add_notification = Notification(sender=request.user, receiver=notificated_user, entry=entry)
                         add_notification.save()
 
-                return HttpResponseRedirect(reverse('schemes:microblog'))
+                return HttpResponseRedirect(reverse('schemes:show_entry', args=(entry.id,)))
         else:
             entry_form = EntryForm()
 

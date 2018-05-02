@@ -4,7 +4,7 @@
 
     <div class="item">
         <div class="content">
-            <h1><input class="left_button" type="button" value="#{% if scheme.replay != None %}{{ scheme.replay.name }}{% else %}{{ scheme.ureplay.name }}{% endif %}" id="game" onclick="toggleForm('replay_info', 'game')" /> {% if scheme.user == request.user %} &rarr; <a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a> {% endif %}<span class="right"><input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1><input class="left_button" type="button" value="#{{ scheme.name }}" id="game" onclick="toggleForm('replay_info', 'game')" /> {% if scheme.user == request.user %} &rarr; <a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a> {% endif %}<span class="right"><input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
             <h1 class="green" id="replay_info" style="display:none">{% if scheme.ureplay.parent_replay != None %}<span>Fork partii: <a href="{% url 'schemes:create_scheme' scheme.ureplay.parent_replay.name %}">{{ scheme.ureplay.parent_replay.name }}</a></span><br />{% endif %}
             {% if scheme.replay != None %}
                 <span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />

@@ -95,7 +95,7 @@
                     {% for scheme in directory.schemes.all %}
 
                     <tr>
-                        <td>{% if scheme.replay != None %}<a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.replay }}</a>{% else %}<a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.ureplay }}</a>{% endif %}</td>
+                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a></td>
                         {% if scheme.directory.scheme_access == '1' %}
                             <td colspan="2"><a href="{% url 'schemes:user_official_schemes' scheme.directory.id scheme.user %}"> {{ scheme.user }}</a></td>
                         {% else %}

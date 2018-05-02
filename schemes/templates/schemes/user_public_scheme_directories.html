@@ -27,7 +27,7 @@
                     {% for directory in directories %}
 
                     <tr>
-                        <td><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> <br /> <a href="{% url 'schemes:edit_scheme_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme_directory' directory.id %}">usuń</a></td>
+                        <td><a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a></td>
                         <td>{{ directory.get_scheme_access_display }}</td>
                         <td>{{ directory.get_scheme_type_display }}</td>
                     </tr>

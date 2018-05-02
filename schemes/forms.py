@@ -60,13 +60,14 @@ class SchemeDirectoryForm(forms.ModelForm):
         return scheme_access
 
 class SchemeForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Nazwa')
     elements = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Elementy')
     board = forms.ChoiceField(choices=BOARD_TYPE, label='Boisko')
     comment = forms.CharField(widget=forms.Textarea, required=False, label='Opis')
     
     class Meta:
         model = Scheme
-        fields = ('elements', 'board', 'directory', 'comment')
+        fields = ('elements', 'board', 'directory', 'name', 'comment')
 
     def __init__(self, *args, **kwargs):
         self.user_id = kwargs.pop('user_id', None)
@@ -107,11 +108,12 @@ class ReplayDirectoryForm(forms.ModelForm):
         return parent_dir
 
 class ReplayForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Nazwa')
     checked = forms.ChoiceField(choices=REPLAY_STATUS, label='Status')
 
     class Meta:
         model = Replay
-        fields = ('directory', 'checked')
+        fields = ('directory', 'name', 'checked')
 
     def __init__(self, *args, **kwargs):
         self.user_id = kwargs.pop('user_id', None)

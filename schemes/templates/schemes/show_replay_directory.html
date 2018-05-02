@@ -89,7 +89,7 @@
 
                     <tr>
 
-                        <td style="text-align: left">{% if vreplay.replay != None %}<a href="{% url 'schemes:create_scheme' vreplay.replay.name %}">{{ vreplay.replay.name }}</a>{% else %}<a href="{% url 'schemes:create_scheme_from_custom_ureplay' vreplay.ureplay.id %}">{{ vreplay.ureplay.name }}</a>{% endif %}<br />
+                        <td style="text-align: left">{% if vreplay.replay != None %}<a href="{% url 'schemes:create_scheme' vreplay.replay.name %}">{{ vreplay.name }}</a>{% else %}<a href="{% url 'schemes:create_scheme_from_custom_ureplay' vreplay.ureplay.id %}">{{ vreplay.name }}</a>{% endif %}<br />
 
                         {% for scheme in vreplay.replay.replays.all %} 
                             {% if scheme.user == request.user %} 

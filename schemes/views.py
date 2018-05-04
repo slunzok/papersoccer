@@ -36,11 +36,11 @@ def index(request):
 
     online_users = User.objects.filter(last_login__range=(timezone.now()-timedelta(days=1), timezone.now())).count()
 
-    return render(request, 'schemes/index.html', {'last_entries': entries, 'is_paginated' : is_paged, 'online_users': online_users})
+    return render(request, 'schemes/index.html', {'last_entries': entries, 'is_paginated' : is_paged, 'online_users': online_users, 'active': 1})
 
 def online_users(request):
     online_users = User.objects.filter(last_login__range=(timezone.now()-timedelta(days=1), timezone.now())).order_by('-last_login')
-    return render(request, 'schemes/online_users.html', {'online_users': online_users})
+    return render(request, 'schemes/online_users.html', {'online_users': online_users, 'active': 1})
 
 # Schemes
 
@@ -64,7 +64,7 @@ def user_scheme_directories(request):
         update_last_login.last_login = timezone.now()
         update_last_login.save()
 
-        return render(request, 'schemes/user_scheme_directories.html', {'directories': directories, 'schemes': schemes, 'add_directory_form': add_directory_form})
+        return render(request, 'schemes/user_scheme_directories.html', {'directories': directories, 'schemes': schemes, 'add_directory_form': add_directory_form, 'active': 2})
 
     else:
         return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
@@ -73,14 +73,14 @@ def user_scheme_directories(request):
 def user_public_scheme_directories(request, username):
     user = get_object_or_404(User, username=username)
     directories = SchemeDirectory.objects.filter(parent_dir=None, user=user, scheme_access=2).order_by('name')
-    return render(request, 'schemes/user_public_scheme_directories.html', {'user': user, 'directories': directories})
+    return render(request, 'schemes/user_public_scheme_directories.html', {'user': user, 'directories': directories, 'active': 2})
 
 # 03. /schematy/katalog/<directory_id>/user/<username>/
 def user_official_schemes(request, directory_id, username):
     directory = get_object_or_404(SchemeDirectory, pk=directory_id, scheme_access=1)
     user = get_object_or_404(User, username=username)
     schemes = Scheme.objects.filter(directory=directory, user=user)
-    return render(request, 'schemes/user_official_schemes.html', {'directory': directory, 'schemes': schemes})
+    return render(request, 'schemes/user_official_schemes.html', {'directory': directory, 'user': user, 'schemes': schemes, 'active': 2})
 
 # 04. /schematy/katalog/<id>/
 def show_scheme_directory(request, directory_id):
@@ -98,13 +98,13 @@ def show_scheme_directory(request, directory_id):
         else:
             add_directory_form = SchemeDirectoryForm(user_id=request.user)
 
-        return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'add_directory_form': add_directory_form})
+        return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'add_directory_form': add_directory_form, 'active': 2})
 
     else:
         if directory.scheme_access == '3':
             return HttpResponse('Prywatny katalog!')
         else:
-            return render(request, 'schemes/show_scheme_directory.html', {'directory': directory})
+            return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'active': 2})
 
 # 05. /schematy/katalog/<id>/edytuj/
 def edit_scheme_directory(request, directory_id):
@@ -120,7 +120,7 @@ def edit_scheme_directory(request, directory_id):
         else:
             edit_directory_form = SchemeDirectoryForm(instance=directory, user_id=request.user)
 
-        return render(request, 'schemes/edit_scheme_directory.html', {'directory': directory, 'edit_directory_form': edit_directory_form, 'user_directories': user_directories})
+        return render(request, 'schemes/edit_scheme_directory.html', {'directory': directory, 'edit_directory_form': edit_directory_form, 'user_directories': user_directories, 'active': 2})
 
     else:
         return HttpResponse("Nie jesteś właścicielem tego katalogu!")
@@ -134,7 +134,7 @@ def delete_scheme_directory(request, directory_id):
             directory.delete()
             return HttpResponseRedirect(reverse('schemes:user_scheme_directories'))
         else:
-            return render(request, 'schemes/delete_scheme_directory.html', {'directory': directory})
+            return render(request, 'schemes/delete_scheme_directory.html', {'directory': directory, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tego katalogu!")
 
@@ -162,14 +162,15 @@ def create_scheme(request, replay_id):
                 scheme = scheme_form.save(commit=False)
                 scheme.replay = replay
                 scheme.user = request.user
+                scheme.name = replay.name
                 scheme.save()
                 return HttpResponseRedirect(reverse('schemes:show_scheme', args=(scheme.id,)))
         else:
             return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
     else:
-        scheme_form = SchemeForm(user_id=request.user.id, initial={'name': replay.name})
+        scheme_form = SchemeForm(user_id=request.user.id)
 
-    return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form})
+    return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form, 'active': 2})
 
 # 09. /partia/<replay_id>/dodaj/
 def add_to_user_replay_directory(request, replay_id):
@@ -183,12 +184,13 @@ def add_to_user_replay_directory(request, replay_id):
                 add_replay = replay_form.save(commit=False)
                 add_replay.replay = replay
                 add_replay.user = request.user
+                add_replay.name = replay.name
                 add_replay.save()
                 return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_replay.directory.id,)))
         else:
-            replay_form = ReplayForm(user_id=request.user.id, initial={'name': replay.name})
+            replay_form = ReplayForm(user_id=request.user.id)
 
-        return render(request, 'schemes/add_replay.html', {'replay': replay, 'replay_form': replay_form, 'user_directories': user_directories})
+        return render(request, 'schemes/add_replay.html', {'replay': replay, 'replay_form': replay_form, 'user_directories': user_directories, 'active': 2})
     else:
         return HttpResponse('Opcja dostępna tylko dla zalogowanych użytkowników!')
 
@@ -199,7 +201,7 @@ def show_scheme(request, scheme_id):
     if scheme.user != request.user and scheme.directory.scheme_access == '3':
         return HttpResponse("Schemat prywatny!")
     else:
-        return render(request, 'schemes/show_scheme.html', {'scheme': scheme})
+        return render(request, 'schemes/show_scheme.html', {'scheme': scheme, 'active': 2})
 
 # 11. /schemat/<scheme_id>/edytuj/
 def edit_scheme(request, scheme_id):
@@ -215,7 +217,7 @@ def edit_scheme(request, scheme_id):
         else:
             scheme_form = SchemeForm(instance=scheme, user_id=request.user.id)
 
-        return render(request, 'schemes/edit_scheme.html', {'scheme': scheme, 'scheme_form': scheme_form, 'user_directories': user_directories})
+        return render(request, 'schemes/edit_scheme.html', {'scheme': scheme, 'scheme_form': scheme_form, 'user_directories': user_directories, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tego schematu!")
 
@@ -228,7 +230,7 @@ def delete_scheme(request, scheme_id):
             scheme.delete()
             return HttpResponseRedirect(reverse('schemes:show_scheme_directory', args=(scheme.directory.id,)))
         else:
-            return render(request, 'schemes/delete_scheme.html', {'scheme': scheme})
+            return render(request, 'schemes/delete_scheme.html', {'scheme': scheme, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tego schematu!")
 

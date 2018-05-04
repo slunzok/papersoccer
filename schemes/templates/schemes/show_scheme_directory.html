@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{% if directory.parent_dir.name != None %}{{ directory.parent_dir.name }} - {% endif %} {{ directory.name }}{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %}<span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span>{% endif %}</h1>
+            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' directory.user %}">@{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %}<span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span>{% endif %}</h1>
 
             {% if directory.user == request.user %}
 
@@ -48,7 +50,7 @@
 
                 {% if directory.children_scheme_directory.count == 0 %}
 
-                    <p><strong>Brak podkatalogów!</strong></p>
+                    <p><strong>Brak katalogów!</strong></p>
 
                 {% else %}
 
@@ -88,7 +90,11 @@
                         {% if directory.scheme_access == '1' %}
                             <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Autor</th>
                         {% else %}
-                            <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Ustawienia</th>
+                            {% if directory.user == request.user %}
+                                <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Ustawienia</th>
+                            {% else %}
+                                <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Komentarz</th>
+                            {% endif %}
                         {% endif %}
                     </tr>
 
@@ -97,10 +103,14 @@
                     <tr>
                         <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a></td>
                         {% if scheme.directory.scheme_access == '1' %}
-                            <td colspan="2"><a href="{% url 'schemes:user_official_schemes' scheme.directory.id scheme.user %}"> {{ scheme.user }}</a></td>
+                            <td colspan="2"><a href="{% url 'schemes:user_official_schemes' scheme.directory.id scheme.user %}"> @{{ scheme.user }}</a></td>
                         {% else %}
-                            <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
-                            <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
+                            {% if directory.user == request.user %}
+                                <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
+                                <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
+                            {% else %}
+                                <td colspan="2">{% if scheme.comment == '' %}-{% else %}{{ scheme.comment }}{% endif %}</td>
+                            {% endif %}
                         {% endif %}
                     </tr>
 

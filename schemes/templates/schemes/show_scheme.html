@@ -1,5 +1,7 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}schemat - partia {% if scheme.replay != None %}#{{ scheme.replay.name }}{% else %}#{{ scheme.ureplay.name }}{% endif %}{% endblock %}
+
 {% block content %}
 
     <div class="item">

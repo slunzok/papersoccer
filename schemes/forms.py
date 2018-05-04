@@ -60,7 +60,7 @@ class SchemeDirectoryForm(forms.ModelForm):
         return scheme_access
 
 class SchemeForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Nazwa')
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), required=False, label='Nazwa')
     elements = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Elementy')
     board = forms.ChoiceField(choices=BOARD_TYPE, label='Boisko')
     comment = forms.CharField(widget=forms.Textarea, required=False, label='Opis')
@@ -108,7 +108,7 @@ class ReplayDirectoryForm(forms.ModelForm):
         return parent_dir
 
 class ReplayForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), label='Nazwa')
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'scheme'}), required=False, label='Nazwa')
     checked = forms.ChoiceField(choices=REPLAY_STATUS, label='Status')
 
     class Meta:

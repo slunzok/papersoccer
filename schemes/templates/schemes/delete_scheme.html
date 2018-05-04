@@ -1,15 +1,17 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}schemat - partia {% if scheme.replay != None %}#{{ scheme.replay.name }}{% else %}#{{ scheme.ureplay.name }}{% endif %} - usuń{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' scheme.directory.user %}">{{ scheme.directory.user }}</a></strong> - {% if scheme.directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' scheme.directory.parent_dir.id %}">{{ scheme.directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' scheme.directory.id %}">{{ scheme.directory.name }}</a></h1>
+            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' scheme.directory.user %}">@{{ scheme.directory.user }}</a></strong> - {% if scheme.directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' scheme.directory.parent_dir.id %}">{{ scheme.directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' scheme.directory.id %}">{{ scheme.directory.name }}</a></h1>
 
             <form action="" method="POST">
             {% csrf_token %}
 
-            <p>Na pewno chcesz usunąc ten schemat?</p>
+            <p>Czy jesteś pewny, że chcesz usunąć ten schemat?</p>
 
             <p><label></label> <input name="delete_scheme" type="submit" value="Tak, usuń schemat!" /></p>
 

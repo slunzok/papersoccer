@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}publiczne schematy - {{ user.username }}{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1>{{ user }} - schematy</h1>
+            <h1>Publiczne schematy - <a href="{% url 'schemes:show_user_profile' user.username %}">@{{ user.username }}</a></h1>
 
             <div class="body">
 
@@ -14,7 +16,7 @@
 
                 {% else %}
 
-                    <p><strong>Katalogi publiczne:</strong></p>
+                    <p><strong>Katalogi:</strong></p>
 
                     <table id="myTable" class="data-table">
 

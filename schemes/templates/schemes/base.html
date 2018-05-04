@@ -4,11 +4,11 @@
 
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta http-equiv="content-language" content="pl" />
-<meta name="description" content="" />
-<meta name="keywords" content="" /> 
-<meta name="author" content=""/>
+<meta name="description" content="papersoccer.pl - strona do łatwego i wygodnego dodawania schematów z możliwością treningu" />
+<meta name="keywords" content="piłka na kartce papersoccer piłkarzyki orlik treningowy schematy analiza partii mazak Gmocha" /> 
+<meta name="author" content="slunzok"/>
 
-<title>title</title>
+<title>papersoccer.pl - {% block title %} {% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="/static/style.css" media="screen"/>
 <script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/static/js/utils.js"></script>
@@ -23,39 +23,53 @@
 	<div class="navigation">
 
         <ul id="accordion">
-            <li id="active">
-		        <h1>papersoccer.pl</h1>
-		        <ul>
+            <li{% if active == 1 %} id="active"{% endif %}>
+                <h1>papersoccer.pl</h1>
+                <ul>
                     <li><a href="{% url 'schemes:index' %}">wejście główne</a></li>
-                    <li><a href="">link #2</a></li>
-                    <li><a href="">link #3</a></li>
-                    <li><a href="{% url 'schemes:kurnik_user' 'kurnikoland' %}">szukaj gracza (kurnik)</a></li>
-		        </ul>
+                    <li><a href="{% url 'schemes:training_independent' %}">orlik treningowy</a></li>
+                    <li><a href="{% url 'schemes:microblog' %}">trybuna piłkarska</a></li>
+                    <li><a href="{% url 'schemes:kurnik_user' 'kurnikoland' %}">karty zawodników (kurnik)</a></li>
+                </ul>
             </li>
-            <li>
-		        <h1>schematy - obrona</h1>
-		        <ul>                    <li><a href="">link #1</a></li>
+            <li{% if active == 2 %} id="active"{% endif %}>
+                <h1>strefa kibica</h1>
+                <ul>
+                    {% if request.user.is_authenticated %}                    <li><a href="{% url 'schemes:user_scheme_directories' %}">moje schematy</a></li>
+                    <li><a href="{% url 'schemes:user_replay_directories' %}">analiza partii</a></li>
+                    <li><a href="{% url 'schemes:custom_ureplays' %}">partie treningowe</a></li>
+                    <li><a href="{% url 'schemes:logout_user' %}">wyloguj</a></li>
+                    {% else %}
+                    <li><a href="{% url 'schemes:register_account' %}">załóż konto</a></li>
+                    <li><a href="{% url 'schemes:login_user' %}">zaloguj się</a></li>
+                    <li><a href="">link #3</a></li>
+                    <li><a href="">link #4</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            <li{% if active == 3 %} id="active"{% endif %}>
+                <h1>schematy - obrona</h1>
+                <ul>                    <li><a href="">link #1</a></li>
                     <li><a href="">link #2</a></li>
                     <li><a href="">link #3</a></li>
                     <li><a href="">link #4</a></li>
-		        </ul>
+                </ul>
             </li>
-            <li>
-		        <h1>schematy - atak</h1>
-		        <ul>                    <li><a href="">link #1</a></li>
+            <li{% if active == 4 %} id="active"{% endif %}>
+                <h1>schematy - atak</h1>
+                <ul>                    <li><a href="">link #1</a></li>
                     <li><a href="">link #2</a></li>
                     <li><a href="">link #3</a></li>
                     <li><a href="">link #4</a></li>
-		        </ul>
+                </ul>
             </li>
-            <li>
-                <h1>inne</h1>
-		        <ul>
-                    <li><a href="">link #1</a></li>
+            <li{% if active == 5 %} id="active"{% endif %}>
+                <h1>schematy - inne</h1>
+                <ul>                    <li><a href="">link #1</a></li>
                     <li><a href="">link #2</a></li>
                     <li><a href="">link #3</a></li>
                     <li><a href="">link #4</a></li>
-		        </ul>
+                </ul>
             </li>
         </ul>
 

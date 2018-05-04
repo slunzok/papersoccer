@@ -255,7 +255,7 @@ def user_replay_directories(request):
         update_last_login.last_login = timezone.now()
         update_last_login.save()
 
-        return render(request, 'schemes/user_replay_directories.html', {'directories': directories, 'add_directory_form': add_directory_form})
+        return render(request, 'schemes/user_replay_directories.html', {'directories': directories, 'add_directory_form': add_directory_form, 'active': 2})
 
     else:
         return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
@@ -264,7 +264,7 @@ def user_replay_directories(request):
 def user_public_replay_directories(request, username):
     user = get_object_or_404(User, username=username)
     directories = ReplayDirectory.objects.filter(parent_dir=None, user=user, replay_access=2).order_by('name')
-    return render(request, 'schemes/user_public_replay_directories.html', {'user': user, 'directories': directories})
+    return render(request, 'schemes/user_public_replay_directories.html', {'user': user, 'directories': directories, 'active': 2})
 
 # 03. /partie/katalog/<id>/
 def show_replay_directory(request, directory_id):
@@ -282,13 +282,13 @@ def show_replay_directory(request, directory_id):
         else:
             add_directory_form = ReplayDirectoryForm(user_id=request.user)
 
-        return render(request, 'schemes/show_replay_directory.html', {'directory': directory, 'add_directory_form': add_directory_form})
+        return render(request, 'schemes/show_replay_directory.html', {'directory': directory, 'add_directory_form': add_directory_form, 'active': 2})
 
     else:
         if directory.replay_access == '3':
             return HttpResponse('Prywatny katalog!')
         else:
-            return render(request, 'schemes/show_replay_directory.html', {'directory': directory})
+            return render(request, 'schemes/show_replay_directory.html', {'directory': directory, 'active': 2})
 
 # 04. /partie/katalog/<id>/edytuj/
 def edit_replay_directory(request, directory_id):
@@ -304,7 +304,7 @@ def edit_replay_directory(request, directory_id):
         else:
             edit_directory_form = ReplayDirectoryForm(instance=directory, user_id=request.user)
 
-        return render(request, 'schemes/edit_replay_directory.html', {'directory': directory, 'edit_directory_form': edit_directory_form, 'user_directories': user_directories})
+        return render(request, 'schemes/edit_replay_directory.html', {'directory': directory, 'edit_directory_form': edit_directory_form, 'user_directories': user_directories, 'active': 2})
 
     else:
         return HttpResponse("Nie jesteś właścicielem tego katalogu")
@@ -318,7 +318,7 @@ def delete_replay_directory(request, directory_id):
             directory.delete()
             return HttpResponseRedirect(reverse('schemes:user_replay_directories'))
         else:
-            return render(request, 'schemes/delete_replay_directory.html', {'directory': directory})
+            return render(request, 'schemes/delete_replay_directory.html', {'directory': directory, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tego katalogu")
 
@@ -336,7 +336,7 @@ def edit_vreplay(request, vreplay_id):
         else:
             vreplay_form = ReplayForm(instance=vreplay, user_id=request.user.id)
 
-        return render(request, 'schemes/edit_vreplay.html', {'vreplay': vreplay, 'vreplay_form': vreplay_form, 'user_directories': user_directories})
+        return render(request, 'schemes/edit_vreplay.html', {'vreplay': vreplay, 'vreplay_form': vreplay_form, 'user_directories': user_directories, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tego pliku!")
 
@@ -349,7 +349,7 @@ def delete_vreplay(request, vreplay_id):
             vreplay.delete()
             return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(vreplay.directory.id,)))
         else:
-            return render(request, 'schemes/delete_vreplay.html', {'vreplay': vreplay})
+            return render(request, 'schemes/delete_vreplay.html', {'vreplay': vreplay, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tego pliku!")
 
@@ -371,7 +371,7 @@ def manage_vreplays(request, directory_id):
         else:
             replays_formset = ReplaysFormSet(instance=directory)
 
-        return render(request, 'schemes/manage_virtual_replays.html', {'directory': directory, 'replays_formset': replays_formset})
+        return render(request, 'schemes/manage_virtual_replays.html', {'directory': directory, 'replays_formset': replays_formset, 'active': 2})
 
     else:
         return HttpResponse("Nie jesteś właścicielem katalogu!")

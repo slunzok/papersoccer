@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{% if directory.parent_dir.name != None %}{{ directory.parent_dir.name }} - {% endif %} {{ directory.name }} - sprawdź wiele plików{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a></h1>
+            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' directory.user %}">@{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a></h1>
 
             {% if directory.vreplays.count == 0 %}
 
@@ -54,7 +56,7 @@
 
                 {% endfor %}
 
-                <p><label></label> <input name="change_vreplay_settings" type="submit" value="Zmień ustawienia!" /></p>
+                <p><label></label> <input name="change_vreplays_settings" type="submit" value="Zmień ustawienia!" /></p>
 
                 </form>
 

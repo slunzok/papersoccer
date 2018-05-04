@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{% if directory.parent_dir.name != None %}{{ directory.parent_dir.name }} - {% endif %} {{ directory.name }}{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' directory.user %}">{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %}<span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span>{% endif %}</h1>
+            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' directory.user %}">@{{ directory.user }}</a></strong> - {% if directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' directory.parent_dir.id %}">{{ directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %}<span class="right"><input type="button" value="dodaj katalog" id="add_directory" onclick="toggleForm('add_directory_form', 'add_directory')" /></span>{% endif %}</h1>
 
             {% if directory.user == request.user %}
 
@@ -46,7 +48,7 @@
 
                 {% if directory.children_replay_directory.count == 0 %}
 
-                    <p><strong>Brak podkatalogów!</strong></p>
+                    <p><strong>Brak katalogów!</strong></p>
 
                 {% else %}
 
@@ -63,7 +65,7 @@
                     {% for directory in directory.children_replay_directory.all %}
 
                     <tr>
-                        <td><a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a><br /><a href="{% url 'schemes:edit_replay_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_replay_directory' directory.id %}">usuń</a></td>
+                        <td><a href="{% url 'schemes:show_replay_directory' directory.id %}">{{ directory.name }}</a> {% if directory.user == request.user %} <br /><a href="{% url 'schemes:edit_replay_directory' directory.id %}">edytuj</a> - <a href="{% url 'schemes:delete_replay_directory' directory.id %}">usuń</a> {% endif %}</td>
                         <td>{{ directory.get_replay_access_display }}</td>
                         <td>{{ directory.vreplays.count }} plików</td>
                     </tr>
@@ -98,7 +100,7 @@
                         {% endfor %}
                         </td>
 
-                        <td style="text-align: left">{% if vreplay.checked == '0' %}<span class="red_bull">&bull;</span> niesprawdzona {% elif vreplay.checked == '1' %}<span class="green_bull">&bull;</span> sprawdzona{% endif %}<br /> <a href="{% url 'schemes:edit_vreplay' vreplay.id %}">edytuj</a> - <a href="{% url 'schemes:delete_vreplay' vreplay.id %}">usuń</a></td>
+                        <td style="text-align: left">{% if vreplay.checked == '0' %}<span class="red_bull">&bull;</span> niesprawdzona {% elif vreplay.checked == '1' %}<span class="green_bull">&bull;</span> sprawdzona{% endif %} {% if directory.user == request.user %} <br /> <a href="{% url 'schemes:edit_vreplay' vreplay.id %}">edytuj</a> - <a href="{% url 'schemes:delete_vreplay' vreplay.id %}">usuń</a>{% endif %}</td>
                     </tr>
 
                     {% endfor %}

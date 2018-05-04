@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{% if vreplay.directory.parent_dir.name != None %}{{ vreplay.directory.parent_dir.name }} - {% endif %} {{ vreplay.directory.name }} - edytuj{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' vreplay.directory.user %}">{{ vreplay.directory.user }}</a></strong> - {% if vreplay.directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' vreplay.directory.parent_dir.id %}">{{ vreplay.directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' vreplay.directory.id %}">{{ vreplay.directory.name }}</a></h1>
+            <h1><strong><a href="{% url 'schemes:user_public_replay_directories' vreplay.directory.user %}">@{{ vreplay.directory.user }}</a></strong> - {% if vreplay.directory.parent_dir.name != None %}<a href="{% url 'schemes:show_replay_directory' vreplay.directory.parent_dir.id %}">{{ vreplay.directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_replay_directory' vreplay.directory.id %}">{{ vreplay.directory.name }}</a></h1>
 
             <form action="" method="POST">
             {% csrf_token %}

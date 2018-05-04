@@ -54,7 +54,7 @@
 
                 {% else %}
 
-                    <p><strong>Katalogi:</strong></p>
+                    <p><strong>Katalogi ({{ directory.children_scheme_directory.count }})</strong></p>
 
                     <table id="myTable" class="data-table">
 
@@ -81,7 +81,7 @@
 
                 {% if directory.schemes.count != 0 %}
 
-                    <p><strong>Schematy:</strong></p>
+                    <p><strong>Schematy ({{ directory.schemes.count }})</strong></p>
 
                     <table id="myTable2" class="data-table">
 

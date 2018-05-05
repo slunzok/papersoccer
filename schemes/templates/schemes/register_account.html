@@ -1,13 +1,15 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}zarejestruj konto{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><input id="save_replay" type="button" value="zarejestruj konto" onclick="gmochToggleForm('save_replay_form', 'save_replay')" /> <span id="mouse"></span> <span class="right"> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1><input id="register_an_account" type="button" value="zarejestruj konto" onclick="gmochToggleForm('register_account_form', 'register_an_account')" /> <span id="mouse"></span> <span class="right"> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
             <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="obróć boisko" onclick="rotate()" /><input type="button" value="odblokuj boisko" id="cut_back_accept" onclick='manageMoves()' /></span></h1>
 
-            <form action="" method="POST" id="save_replay_form" style="display:none">
+            <form action="" method="POST" id="register_account_form" style="display:none">
             {% csrf_token %}
 
             {{ register_user_form.non_field_errors }}

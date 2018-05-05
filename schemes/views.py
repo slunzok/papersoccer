@@ -773,7 +773,7 @@ def register_account(request):
         else:
             register_user_form = UserCreateForm()
 
-        return render(request, 'schemes/register_account.html', {'replay': replay, 'register_user_form': register_user_form})
+        return render(request, 'schemes/register_account.html', {'replay': replay, 'register_user_form': register_user_form, 'active': 2})
 
 # 02. /zaloguj/
 def login_user(request):
@@ -790,7 +790,7 @@ def login_user(request):
             else:
                 return HttpResponseRedirect(reverse('schemes:login_user'))
 
-        return render(request, 'schemes/login_user.html')
+        return render(request, 'schemes/login_user.html', {'active': 2})
 
 # 03. /wyloguj/
 def logout_user(request):

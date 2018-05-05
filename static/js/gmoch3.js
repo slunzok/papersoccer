@@ -242,13 +242,14 @@ function buttonPress(e) {
                                 board[cursorX][cursorY] = "01245673";
                             }
                             goal = 1;
-                            document.getElementById("username").innerHTML = '<label for="id_username">Nick:</label> <input type="text" name="username" class="scheme" autofocus required id="id_username" />'
-                            document.getElementById("password1").innerHTML = '<label for="id_password1">Hasło:</label> <input type="password" name="password1" class="scheme" required id="id_password1" />'
-                            document.getElementById("password2").innerHTML = '<label for="id_password2">Powtórz:</label> <input type="password" name="password2" class="scheme" required id="id_password2" />'
-                            document.getElementById("email").innerHTML = '<label for="id_email">*Email:</label> <input type="text" name="email" class="scheme" id="id_email" />'
-                            document.getElementById("kurnik").innerHTML = '<label for="id_kurnik">*Kurnik:</label> <input type="text" name="kurnik" class="scheme" id="id_kurnik" />'
-                            document.getElementById("not_required").innerHTML = '* Pola nieobowiązkowe, ale warto je podać (np. jeśli zapomnisz hasła, to jedynie na podstawie tych pól będziesz mógł udowodnić, że jesteś właścicielem konta.'
-                            document.getElementById("register_account").innerHTML = '<label></label> <input name="create_custom_replay" type="submit" value="Utwórz konto" />'
+                            document.getElementById("username").innerHTML = '<label for="id_username">Nick:</label> <input type="text" name="username" class="scheme" autofocus required id="id_username" />';
+                            document.getElementById("password1").innerHTML = '<label for="id_password1">Hasło:</label> <input type="password" name="password1" class="scheme" required id="id_password1" />';
+                            document.getElementById("password2").innerHTML = '<label for="id_password2">Powtórz:</label> <input type="password" name="password2" class="scheme" required id="id_password2" />';
+                            document.getElementById("email").innerHTML = '<label for="id_email">*Email:</label> <input type="text" name="email" class="scheme" id="id_email" />';
+                            document.getElementById("kurnik").innerHTML = '<label for="id_kurnik">*Kurnik:</label> <input type="text" name="kurnik" class="scheme" id="id_kurnik" />';
+                            document.getElementById("not_required").innerHTML = '* Pola nieobowiązkowe, ale warto je podać (np. jeśli zapomnisz hasła, to jedynie na podstawie tych pól będziesz mógł udowodnić, że jesteś właścicielem konta)';
+                            document.getElementById("register_account").innerHTML = '<label></label> <input name="create_custom_replay" type="submit" value="Utwórz konto" />';
+                            gmochToggleForm('register_account_form', 'register_an_account');
                         } else if (cursorX == 4 && cursorY == 12) {
                             if (moveType == "3") {
                                 board[cursorX][cursorY] = "01234567";
@@ -258,13 +259,14 @@ function buttonPress(e) {
                                 board[cursorX][cursorY] = "02345671"
                             }
                             goal = 1;
-                            document.getElementById("username").innerHTML = '<label for="id_username">Nick:</label> <input type="text" name="username" class="scheme" autofocus required id="id_username" />'
-                            document.getElementById("password1").innerHTML = '<label for="id_password1">Hasło:</label> <input type="password" name="password1" class="scheme" required id="id_password1" />'
-                            document.getElementById("password2").innerHTML = '<label for="id_password2">Powtórz:</label> <input type="password" name="password2" class="scheme" required id="id_password2" />'
-                            document.getElementById("email").innerHTML = '<label for="id_email">*Email:</label> <input type="text" name="email" class="scheme" id="id_email" />'
-                            document.getElementById("kurnik").innerHTML = '<label for="id_kurnik">*Kurnik:</label> <input type="text" name="kurnik" class="scheme" id="id_kurnik" />'
-                            document.getElementById("not_required").innerHTML = '* Pola nieobowiązkowe, ale warto je podać (np. jeśli zapomnisz hasła, to jedynie na podstawie tych pól będziesz mógł udowodnić, że jesteś właścicielem konta.'
-                            document.getElementById("register_account").innerHTML = '<label></label> <input name="create_custom_replay" type="submit" value="Utwórz konto" />'
+                            document.getElementById("username").innerHTML = '<label for="id_username">Nick:</label> <input type="text" name="username" class="scheme" autofocus required id="id_username" />';
+                            document.getElementById("password1").innerHTML = '<label for="id_password1">Hasło:</label> <input type="password" name="password1" class="scheme" required id="id_password1" />';
+                            document.getElementById("password2").innerHTML = '<label for="id_password2">Powtórz:</label> <input type="password" name="password2" class="scheme" required id="id_password2" />';
+                            document.getElementById("email").innerHTML = '<label for="id_email">*Email:</label> <input type="text" name="email" class="scheme" id="id_email" />';
+                            document.getElementById("kurnik").innerHTML = '<label for="id_kurnik">*Kurnik:</label> <input type="text" name="kurnik" class="scheme" id="id_kurnik" />';
+                            document.getElementById("not_required").innerHTML = '* Pola nieobowiązkowe, ale warto je podać (np. jeśli zapomnisz hasła, to jedynie na podstawie tych pól będziesz mógł udowodnić, że jesteś właścicielem konta)';
+                            document.getElementById("register_account").innerHTML = '<label></label> <input name="create_custom_replay" type="submit" value="Utwórz konto" />';
+                            gmochToggleForm('register_account_form', 'register_an_account');
                         }
 
                         drawGameState();

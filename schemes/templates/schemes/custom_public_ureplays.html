@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}publiczne partie treningowe - {{ user.username }}{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1>{{ user.username }} - publiczne partie treningowe</h1>
+            <h1>Publiczne partie treningowe - <a href="{% url 'schemes:show_user_profile' user.username %}">@{{ user.username }}</a></h1>
 
             <div class="body">
 

@@ -393,7 +393,7 @@ def training_independent(request):
     else:
         user_replay_form = UserReplayForm()
 
-    return render(request, 'schemes/training_independent.html', {'user_replay_form': user_replay_form})
+    return render(request, 'schemes/training_independent.html', {'user_replay_form': user_replay_form, 'active': 1})
 
 # 02. /orlik/<replay_id>/
 def training_dependent(request, replay_id):
@@ -413,13 +413,13 @@ def training_dependent(request, replay_id):
     else:
         user_replay_form = UserReplayForm()
 
-    return render(request, 'schemes/training_dependent.html', {'replay': replay, 'user_replay_form': user_replay_form})
+    return render(request, 'schemes/training_dependent.html', {'replay': replay, 'user_replay_form': user_replay_form, 'active': 1})
 
 # 03. /orlik/partie/
 def custom_ureplays(request):
     if request.user.is_authenticated:
         ureplays = UserReplay.objects.filter(user=request.user).order_by('name')
-        return render(request, 'schemes/custom_ureplays.html', {'ureplays': ureplays})
+        return render(request, 'schemes/custom_ureplays.html', {'ureplays': ureplays, 'active': 2})
     else:
         return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
 
@@ -427,7 +427,7 @@ def custom_ureplays(request):
 def custom_public_ureplays(request, username):
     user = get_object_or_404(User, username=username)
     ureplays = UserReplay.objects.filter(user=user, replay_access=2).order_by('name')
-    return render(request, 'schemes/custom_public_ureplays.html', {'user': user, 'ureplays': ureplays})
+    return render(request, 'schemes/custom_public_ureplays.html', {'user': user, 'ureplays': ureplays, 'active': 2})
 
 # 05. /orlik/partia/<replay_id>/
 def create_scheme_from_custom_ureplay(request, replay_id):
@@ -443,14 +443,15 @@ def create_scheme_from_custom_ureplay(request, replay_id):
                     scheme = scheme_form.save(commit=False)
                     scheme.ureplay = ureplay
                     scheme.user = request.user
+                    scheme.name = ureplay.name
                     scheme.save()
                     return HttpResponseRedirect(reverse('schemes:show_scheme', args=(scheme.id,)))
             else:
                 return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
         else:
-            scheme_form = SchemeForm(user_id=request.user.id, initial={'name': ureplay.name})
+            scheme_form = SchemeForm(user_id=request.user.id)
 
-        return render(request, 'schemes/create_scheme_from_custom_ureplay.html', {'ureplay': ureplay, 'scheme_form': scheme_form})
+        return render(request, 'schemes/create_scheme_from_custom_ureplay.html', {'ureplay': ureplay, 'scheme_form': scheme_form, 'active': 2})
 
 # 06. /orlik/partia/<replay>/edytuj/
 def edit_ureplay(request, replay_id):
@@ -465,7 +466,7 @@ def edit_ureplay(request, replay_id):
         else:
             ureplay_form = UserReplayForm(instance=ureplay)
 
-        return render(request, 'schemes/edit_ureplay.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form})
+        return render(request, 'schemes/edit_ureplay.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tej partii treningowej!")
 
@@ -478,7 +479,7 @@ def delete_ureplay(request, replay_id):
             ureplay.delete()
             return HttpResponseRedirect(reverse('schemes:custom_ureplays'))
         else:
-            return render(request, 'schemes/delete_ureplay.html', {'ureplay': ureplay})
+            return render(request, 'schemes/delete_ureplay.html', {'ureplay': ureplay, 'active': 2})
     else:
         return HttpResponse("Nie jesteś właścicielem tej partii treningowej!")
 
@@ -497,12 +498,13 @@ def add_ureplay_to_user_replay_directory(request, replay_id):
                     add_replay = ureplay_form.save(commit=False)
                     add_replay.ureplay = ureplay
                     add_replay.user = request.user
+                    add_replay.name = ureplay.name
                     add_replay.save()
                     return HttpResponseRedirect(reverse('schemes:show_replay_directory', args=(add_replay.directory.id,)))
             else:
-                ureplay_form = ReplayForm(user_id=request.user.id, initial={'name': ureplay.name})
+                ureplay_form = ReplayForm(user_id=request.user.id)
 
-            return render(request, 'schemes/add_ureplay_to_user_replay_directory.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form, 'user_directories': user_directories})
+            return render(request, 'schemes/add_ureplay_to_user_replay_directory.html', {'ureplay': ureplay, 'ureplay_form': ureplay_form, 'user_directories': user_directories, 'active': 2})
         else:
             return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
 

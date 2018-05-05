@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}dodaj schemat - #{{ ureplay.name }}{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><input class="left_button" type="button" value="#{{ ureplay.name }}" id="game" onclick="toggleForm('replay_info', 'game')" /> <span class="right"><input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1><input class="left_button" type="button" value="#{{ ureplay.name }}" id="game" onclick="toggleForm('replay_info', 'game')" /> <span class="right"><a href="{% url 'schemes:add_ureplay_to_user_replay_directory' ureplay.id %}">dodaj do katalogu</a> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
             <h1 class="green" id="replay_info" style="display:none">{% if ureplay.parent_replay != None %}<span>Fork partii: <a href="{% url 'schemes:create_scheme' ureplay.parent_replay.name %}">{{ ureplay.parent_replay.name }}</a></span><br /> <span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />{{ ureplay.parent_replay.replay_date }} - {{ ureplay.parent_replay.replay_time }} - {% if ureplay.parent_replay.replay_round == '60' %}1m{% elif ureplay.parent_replay.replay_round == '120'%}2m{% elif ureplay.parent_replay.replay_round == '180'%}3m{% elif ureplay.parent_replay.replay_round == '300'%}5m{% elif ureplay.parent_replay.replay_round == '420'%}7m{% elif ureplay.parent_replay.replay_round == '900'%}15m{% endif %} - Wygrał: {% if ureplay.parent_replay.result == '0-1' %}{{ ureplay.parent_replay.player2 }} {% else %} {{ ureplay.parent_replay.player1 }} {% endif %} {% else %} <span>Niezależna partia treningowa</span>{% endif %}</h1>
             <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="dodaj schemat" id="status" onclick="newScheme()" /><input type="button" value="obróć boisko" onclick="rotate()" /></span></h1>
             <h1 class="green" id="showElements" style="display:none"><span id="schemeElements">&nbsp;</span> <span class="right"><input type="button" value="formularz zgłoszeniowy" id="send_form" onclick="toggleForm('scheme_form_fields', 'send_form')" /></span></h1>
@@ -47,7 +49,7 @@
                     <p><label></label> {{ field.errors.as_text }}</p>
                     -->
 
-                {% else %}
+                {% elif field.html_name != "name" %}
 
                     <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
                     <p><label></label> {{ field.errors.as_text }}</p>
@@ -65,7 +67,7 @@
                     <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
                     -->
 
-                {% else %}
+                {% elif field.html_name != "name" %}
 
                     <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
 

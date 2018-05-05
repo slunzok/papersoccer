@@ -54,7 +54,7 @@
                         {{ scheme.ureplay.parent_replay.player1 }} 
                     {% endif %}
                 {% else %}
-                    Niezależna partia treningowa
+                    Niezależna partia treningowa - <a href="{% url 'schemes:create_scheme_from_custom_ureplay' scheme.ureplay.id %}">{{ scheme.ureplay.name }}</a>
                 {% endif %}
             {% endif %}
             </h1>

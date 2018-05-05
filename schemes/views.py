@@ -802,7 +802,7 @@ def logout_user(request):
 # 01. /trybuna/
 def microblog(request):
     all_entries = Entry.objects.all().order_by('-created')
-    paginator = Paginator(all_entries, 2)
+    paginator = Paginator(all_entries, 10)
   
     page = request.GET.get('strona')
     try:
@@ -840,9 +840,9 @@ def microblog(request):
         update_last_login.last_login = timezone.now()
         update_last_login.save()
 
-        return render(request, 'schemes/microblog.html', {'entry_form': entry_form, 'last_entries': entries, 'is_paginated' : is_paged})
+        return render(request, 'schemes/microblog.html', {'entry_form': entry_form, 'last_entries': entries, 'is_paginated' : is_paged, 'active': 1})
     else:
-        return render(request, 'schemes/microblog.html', {'last_entries': entries, 'is_paginated' : is_paged})
+        return render(request, 'schemes/microblog.html', {'last_entries': entries, 'is_paginated' : is_paged, 'active': 1})
 
 # 02. /trybuna/wpis/<entry_id>/
 def show_entry(request, entry_id):
@@ -872,9 +872,9 @@ def show_entry(request, entry_id):
         else:
             comment_form = CommentForm()
 
-        return render(request, 'schemes/show_entry.html', {'entry': entry, 'comment_form': comment_form})
+        return render(request, 'schemes/show_entry.html', {'entry': entry, 'comment_form': comment_form, 'active': 1})
     else:
-        return render(request, 'schemes/show_entry.html', {'entry': entry})
+        return render(request, 'schemes/show_entry.html', {'entry': entry, 'active': 1})
 
 # 03. /trybuna/wpis/<entry_id>/edytuj/
 def edit_entry(request, entry_id):
@@ -889,7 +889,7 @@ def edit_entry(request, entry_id):
         else:
             entry_form = EntryForm(instance=entry)
 
-        return render(request, 'schemes/edit_entry.html', {'entry': entry, 'entry_form': entry_form})
+        return render(request, 'schemes/edit_entry.html', {'entry': entry, 'entry_form': entry_form, 'active': 1})
     else:
         return HttpResponse("Nie jesteś autorem wpisu!")
 
@@ -906,7 +906,7 @@ def edit_comment(request, comment_id):
         else:
             comment_form = CommentForm(instance=comment)
 
-        return render(request, 'schemes/edit_comment.html', {'comment': comment, 'comment_form': comment_form})
+        return render(request, 'schemes/edit_comment.html', {'comment': comment, 'comment_form': comment_form, 'active': 1})
     else:
         return HttpResponse("Nie jesteś autorem komentarza!")
 
@@ -924,7 +924,7 @@ def show_notifications(request):
         update_last_login.last_login = timezone.now()
         update_last_login.save()
 
-        paginator = Paginator(old_notifications, 2)
+        paginator = Paginator(old_notifications, 10)
       
         page = request.GET.get('strona')
         try:
@@ -935,7 +935,7 @@ def show_notifications(request):
             notifications = paginator.page(paginator.num_pages)
         is_paged = paginator.num_pages > 1
 
-        return render(request, 'schemes/show_notifications.html', {'new_notifications': new_notifications, 'notifications': notifications, 'is_paginated' : is_paged})
+        return render(request, 'schemes/show_notifications.html', {'new_notifications': new_notifications, 'notifications': notifications, 'is_paginated' : is_paged, 'active': 2})
 
     else:
         return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")

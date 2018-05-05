@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}edycja wpisu{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><a href="{% url 'schemes:show_entry' entry.id %}">Wpis</a></h1>
+            <h1><a href="{% url 'schemes:show_entry' entry.id %}">powrót do wpisu</a></h1>
 
                 <form action="" method="POST">
                 {% csrf_token %}
@@ -26,7 +28,7 @@
 
                 {% endfor %}
 
-                <p><label></label> <input name="add_comment" type="submit" value="Edytuj wpis" /></p>
+                <p><label></label> <input name="add_comment" type="submit" value="Zapisz zmiany" /></p>
 
                 </form>
 

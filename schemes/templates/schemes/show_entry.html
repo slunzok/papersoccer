@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{{ entry.content|truncatechars:40 }}{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1>{% if entry.user == request.user %}<a href="{% url 'schemes:edit_entry' entry.id %}">edytuj wpis</a>{% else %}Autor: {{ entry.user }}{% endif %} {% if user.is_authenticated %}<span class="right"><input type="button" value="dodaj komentarz" id="add_comment" onclick="toggleForm('add_comment_form', 'add_comment')" /></span>{% endif %}</h1>
+            <h1>{% if entry.user == request.user %}<a href="{% url 'schemes:edit_entry' entry.id %}">edytuj wpis</a>{% else %}&nbsp;{% endif %} {% if user.is_authenticated %}<span class="right"><input type="button" value="dodaj komentarz" id="add_comment" onclick="toggleForm('add_comment_form', 'add_comment')" /></span>{% endif %}</h1>
 
             {% if user.is_authenticated %}
 

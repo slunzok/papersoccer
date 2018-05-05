@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}trybuna piłkarska{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1>Trybuna kibicowska {% if user.is_authenticated %}<span class="right"><input type="button" value="dodaj wpis" id="add_entry" onclick="toggleForm('add_entry_form', 'add_entry')" /></span>{% endif %}</h1>
+            <h1>Trybuna piłkarska {% if user.is_authenticated %}<span class="right"><input type="button" value="dodaj wpis" id="add_entry" onclick="toggleForm('add_entry_form', 'add_entry')" /></span>{% endif %}</h1>
 
             {% if user.is_authenticated %}
 

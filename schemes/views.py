@@ -945,7 +945,7 @@ def show_notifications(request):
 # 01. /kibic/<username>/
 def show_user_profile(request, username):
     user_profile = get_object_or_404(User, username=username)
-    return render(request, 'schemes/show_user_profile.html', {'user_profile': user_profile})
+    return render(request, 'schemes/show_user_profile.html', {'user_profile': user_profile, 'active': 2})
 
 # 02. /zmien-haslo/
 def change_password(request):
@@ -961,7 +961,7 @@ def change_password(request):
         else:
             change_password_form = UserChangePasswordForm(instance=user)
 
-        return render(request, 'schemes/change_password.html', {'change_password_form': change_password_form})
+        return render(request, 'schemes/change_password.html', {'change_password_form': change_password_form, 'active': 2})
     else:
         return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
 
@@ -977,7 +977,7 @@ def edit_user_profile(request):
         else:
             edit_profile_form = UserEditProfileForm(instance=profile)
 
-        return render(request, 'schemes/edit_user_profile.html', {'edit_profile_form': edit_profile_form})
+        return render(request, 'schemes/edit_user_profile.html', {'edit_profile_form': edit_profile_form, 'active': 2})
     else:
         return HttpResponse("Opcja dostępna tylko dla zalogowanych użytkowników!")
 

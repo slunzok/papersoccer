@@ -38,6 +38,8 @@
                     {% if request.user.is_authenticated %}                    <li><a href="{% url 'schemes:user_scheme_directories' %}">moje schematy</a></li>
                     <li><a href="{% url 'schemes:user_replay_directories' %}">analiza partii</a></li>
                     <li><a href="{% url 'schemes:custom_ureplays' %}">partie treningowe</a></li>
+                    <li><a href="{% url 'schemes:show_notifications' %}">powiadomienia ({{ new_notifications.count }})</a></li>
+                    <li><a href="{% url 'schemes:show_user_profile' request.user %}">@{{ request.user }} - mój profil</a></li>
                     <li><a href="{% url 'schemes:logout_user' %}">wyloguj</a></li>
                     {% else %}
                     <li><a href="{% url 'schemes:register_account' %}">załóż konto</a></li>

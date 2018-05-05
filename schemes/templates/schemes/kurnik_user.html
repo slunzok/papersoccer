@@ -1,10 +1,12 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{{ players.0.name }} - statystyki{% endblock %}
+
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1>Gracz: {{ players.0.name }}</h1>
+            <h1>Statystyki gracza: <a href="{% url 'schemes:kurnik_user' players.0.name %}">@{{ players.0.name }}</a></h1>
             <div class="body">
 
                 <table id="myTable" class="data-table">

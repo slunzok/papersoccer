@@ -591,7 +591,7 @@ def kurnik_user(request, player_name):
                     keys.append(replay.player1)
 
         players2 = sorted(players, key=lambda k: (int(k['games']), int(k['rank'])), reverse=True)
-        return render(request, 'schemes/kurnik_user.html', {'players': players2})
+        return render(request, 'schemes/kurnik_user.html', {'players': players2, 'active': 1})
     else:
         return HttpResponse('Nie znaleziono gracza!')
 
@@ -676,7 +676,7 @@ def kurnik_user_battles(request, player1_name, player2_name):
                     keys.append(replay.player1)
 
         players2 = sorted(players, key=lambda k: (int(k['games']), int(k['rank'])), reverse=True)
-        return render(request, 'schemes/kurnik_user_battles.html', {'replays': replays, 'players': players2, 'player1': player1_name, 'player2': player2_name})
+        return render(request, 'schemes/kurnik_user_battles.html', {'replays': replays, 'players': players2, 'player1': player1_name, 'player2': player2_name, 'active': 1})
 
     else:
         return HttpResponse('Nie znaleziono gracza!')
@@ -704,7 +704,7 @@ def create_and_add_vreplays(request, player1_name, player2_name):
             else:
                 add_directory_form = ReplayDirectoryForm(user_id=request.user)
 
-            return render(request, 'schemes/create_and_add_vreplays.html', {'player1': player1_name, 'player2': player2_name, 'add_directory_form': add_directory_form, 'user_directories': user_directories})
+            return render(request, 'schemes/create_and_add_vreplays.html', {'player1': player1_name, 'player2': player2_name, 'add_directory_form': add_directory_form, 'user_directories': user_directories, 'active': 1})
         else:
             return HttpResponse("Nie znaleziono jednego z gracza, błąd.")
     else:
@@ -731,7 +731,7 @@ def add_vreplays(request, player1_name, player2_name):
             else:
                 add_replay_form = ReplayForm(user_id=request.user)
 
-            return render(request, 'schemes/add_vreplays.html', {'add_replay_form': add_replay_form, 'user_directories': user_directories})
+            return render(request, 'schemes/add_vreplays.html', {'add_replay_form': add_replay_form, 'user_directories': user_directories, 'active': 1})
         else:
             return HttpResponse("Nie znaleziono jednego z gracza, błąd.")
     else:

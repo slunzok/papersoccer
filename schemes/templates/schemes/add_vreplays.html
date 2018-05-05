@@ -1,5 +1,7 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}skopiuj pliki do katalogu{% endblock %}
+
 {% block content %}
 
     <div class="item">
@@ -33,7 +35,7 @@
                         </select></p>
                         <p><label></label> {{ field.errors.as_text }}</p>
 
-                    {% else %}
+                    {% elif field.html_name != "name" %}
 
                         <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
                         <p><label></label> {{ field.errors.as_text }}</p>
@@ -58,7 +60,7 @@
 
                         </select></p>
 
-                    {% else %}
+                    {% elif field.html_name != "name" %}
 
                         <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
 
@@ -68,7 +70,7 @@
 
             {% endfor %}
 
-            <p><label></label> <input name="copy_vreplays" type="submit" value="Zrób to!" /></p>
+            <p><label></label> <input name="copy_vreplays" type="submit" value="Wykonaj!" /></p>
 
             </form>
 

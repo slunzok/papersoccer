@@ -1,5 +1,7 @@
 {% extends "schemes/base.html" %}
 
+{% block title %}{% if players.0.name == player1 %}{{ player1 }} vs {{ player2 }}{% else %}{{ player2 }} vs {{ player1 }}{% endif %}{% endblock %}
+
 {% block content %}
 
     <div class="item">

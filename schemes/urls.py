@@ -5,8 +5,10 @@ from . import views
 app_name = 'schemes'
 
 urlpatterns = [
+    # Static and other sites
     re_path(r'^$', views.index, name='index'),
     re_path(r'^online/$',  views.online_users, name='online_users'),
+    re_path(r'^headhunter/$',  views.search_kurnik_player, name='search_kurnik_player'),
     # Schemes
     re_path(r'^schematy/$',  views.user_scheme_directories, name='user_scheme_directories'),
     re_path(r'^schematy/(?P<username>([a-zA-Z0-9_\-]+))/$',  views.user_public_scheme_directories, name='user_public_scheme_directories'),
@@ -43,6 +45,8 @@ urlpatterns = [
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/$', views.kurnik_user_battles, name='kurnik_user_battles'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/utworz-kopiuj/$', views.create_and_add_vreplays, name='create_and_add_vreplays'),
     re_path(r'^kurnik/(?P<player1_name>([a-zA-Z0-9]+))/(?P<player2_name>([a-zA-Z0-9]+))/kopiuj/$', views.add_vreplays, name='add_vreplays'),
+    re_path(r'^kurnik-mecze/$',  views.kurnik_users_games, name='kurnik_users_games'),
+    re_path(r'^kurnik-ranking/$',  views.kurnik_users_ranking, name='kurnik_users_ranking'),
     # Registration
     re_path(r'^zarejestruj/$',  views.register_account, name='register_account'),
     re_path(r'^zaloguj/$',  views.login_user, name='login_user'),

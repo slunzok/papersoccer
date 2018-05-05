@@ -10,7 +10,7 @@ from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 
 from .models import KurnikReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, UserReplay, \
-    Profile, Entry, Comment, Notification
+    Profile, Entry, Comment, Notification, KurnikRanking
 from .forms import SchemeDirectoryForm, SchemeForm, ReplayDirectoryForm, ReplayForm, \
     CheckReplayForm, BaseReplayFormSet, UserReplayForm, UserCreateForm, EntryForm, CommentForm, \
     UserChangePasswordForm, UserEditProfileForm
@@ -19,6 +19,8 @@ from random import randint
 from django.utils import timezone
 from datetime import timedelta
 import re
+
+# Static and other sites
 
 def index(request):
     papersoccer = User.objects.get(username="papersoccer")
@@ -41,6 +43,9 @@ def index(request):
 def online_users(request):
     online_users = User.objects.filter(last_login__range=(timezone.now()-timedelta(days=1), timezone.now())).order_by('-last_login')
     return render(request, 'schemes/online_users.html', {'online_users': online_users, 'active': 1})
+
+def search_kurnik_player(request):
+    return render(request, 'schemes/search_kurnik_player.html', {'active': 1})
 
 # Schemes
 
@@ -98,13 +103,33 @@ def show_scheme_directory(request, directory_id):
         else:
             add_directory_form = SchemeDirectoryForm(user_id=request.user)
 
-        return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'add_directory_form': add_directory_form, 'active': 2})
+        if directory.scheme_access == '1':
+            if directory.scheme_type == '1':
+                active_section = 3
+            elif directory.scheme_type == '2':
+                active_section = 4
+            elif directory.scheme_type == '3':
+                active_section = 5
+        else:
+            active_section = 2
+
+        return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'add_directory_form': add_directory_form, 'active': active_section})
 
     else:
         if directory.scheme_access == '3':
             return HttpResponse('Prywatny katalog!')
         else:
-            return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'active': 2})
+            if directory.scheme_access == '1':
+                if directory.scheme_type == '1':
+                    active_section = 3
+                elif directory.scheme_type == '2':
+                    active_section = 4
+                elif directory.scheme_type == '3':
+                    active_section = 5
+            else:
+                active_section = 2
+
+            return render(request, 'schemes/show_scheme_directory.html', {'directory': directory, 'active': active_section})
 
 # 05. /schematy/katalog/<id>/edytuj/
 def edit_scheme_directory(request, directory_id):
@@ -512,7 +537,7 @@ def add_ureplay_to_user_replay_directory(request, replay_id):
 
 # 01. /kurnik/<player_name>/
 def kurnik_user(request, player_name):
-    replays = KurnikReplay.objects.filter(Q(player1=player_name) | Q(player2=player_name)).order_by('name')
+    replays = KurnikReplay.objects.filter(Q(player1=player_name) | Q(player2=player_name)).order_by('name')[:21000]
 
     if replays:
 
@@ -597,7 +622,7 @@ def kurnik_user(request, player_name):
 
 # 02. /kurnik/<player1_name>/<player2_name>/
 def kurnik_user_battles(request, player1_name, player2_name):
-    replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')
+    replays = KurnikReplay.objects.filter(Q(player1=player1_name, player2=player2_name) | Q(player1=player2_name, player2=player1_name)).order_by('name')[:21000]
 
     if replays:
 
@@ -736,6 +761,38 @@ def add_vreplays(request, player1_name, player2_name):
             return HttpResponse("Nie znaleziono jednego z gracza, błąd.")
     else:
         return HttpResponse("Tylko zalogowani użytkownicy mają dostęp do tej opcji!")
+
+# 05. /kurnik-mecze/
+def kurnik_users_games(request):
+    all_players = KurnikRanking.objects.all().order_by('-games')
+    paginator = Paginator(all_players, 100)
+
+    page = request.GET.get('strona')
+    try:
+        players = paginator.page(page)
+    except PageNotAnInteger:
+        players = paginator.page(1)
+    except EmptyPage:
+        players = paginator.page(paginator.num_pages)
+    is_paged = paginator.num_pages > 1
+
+    return render(request, 'schemes/kurnik_users_games.html', {'players': players, 'is_paginated': is_paged, 'active': 1})
+
+# 06. /kurnik-ranking/
+def kurnik_users_ranking(request):
+    all_players = KurnikRanking.objects.all().order_by('-ranking')
+    paginator = Paginator(all_players, 100)
+
+    page = request.GET.get('strona')
+    try:
+        players = paginator.page(page)
+    except PageNotAnInteger:
+        players = paginator.page(1)
+    except EmptyPage:
+        players = paginator.page(paginator.num_pages)
+    is_paged = paginator.num_pages > 1
+
+    return render(request, 'schemes/kurnik_users_ranking.html', {'players': players, 'is_paginated' : is_paged, 'active': 1})
 
 # Registration
 

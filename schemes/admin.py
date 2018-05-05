@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import KurnikReplay, UserReplay, SchemeDirectory, Scheme, ReplayDirectory, Replay, \
-    Profile, Entry, Comment, Notification
+    Profile, Entry, Comment, Notification, KurnikRanking
 
 class KurnikReplayAdmin(admin.ModelAdmin):
     list_display = ('name', 'player1', 'player2')
@@ -33,6 +33,9 @@ class CommentAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('sender', 'receiver', 'entry', 'created',)
 
+class KurnikRankingAdmin(admin.ModelAdmin):
+    list_display = ('player', 'games', 'ranking')
+
 admin.site.register(KurnikReplay, KurnikReplayAdmin)
 admin.site.register(UserReplay, UserReplayAdmin)
 admin.site.register(SchemeDirectory, SchemeDirectoryAdmin)
@@ -43,4 +46,5 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Notification, NotificationAdmin)
+admin.site.register(KurnikRanking, KurnikRankingAdmin)
 

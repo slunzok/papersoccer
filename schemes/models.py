@@ -135,3 +135,11 @@ class Notification(models.Model):
     def __str__(self):
         return str(self.created)
 
+class KurnikRanking(models.Model):
+    player = models.CharField(max_length=20)
+    games = models.IntegerField()
+    ranking = models.IntegerField()
+
+    def __str__(self):
+        return self.player
+

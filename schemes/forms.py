@@ -397,7 +397,7 @@ class UserChangePasswordForm(forms.ModelForm):
         return password
 
 class UserEditProfileForm(forms.ModelForm):
-    kurnik_name = forms.CharField(widget=forms.Textarea, label='Kurnik')
+    kurnik_name = forms.CharField(widget=forms.Textarea, required=False, label='Kurnik')
 
     class Meta:
         model = Profile

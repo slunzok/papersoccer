@@ -28,7 +28,7 @@
                     {% for scheme in schemes %}
 
                     <tr>
-                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.replay }}</a></td>
+                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a></td>
                         <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
                         <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
                     </tr>

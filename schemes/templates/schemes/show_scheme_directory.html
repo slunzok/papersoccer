@@ -46,8 +46,6 @@
 
             <div class="body">
 
-                {% if directory.description != '' %} <p><strong>Opis:</strong> {{ directory.description }} </p>{% endif %}
-
                 {% if directory.children_scheme_directory.count == 0 %}
 
                     <p><strong>Brak katalogów!</strong></p>
@@ -119,6 +117,8 @@
                     </table>
 
                 {% endif %}
+
+                {% if directory.description != '' %} <p class="microhead">Opis</p><p class="microbody"> {{ directory.description|linebreaksbr }} </p>{% endif %}
 
             </div>
         </div>

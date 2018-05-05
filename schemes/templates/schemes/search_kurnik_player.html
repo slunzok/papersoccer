@@ -1,0 +1,45 @@
+{% extends "schemes/base.html" %}
+
+{% block title %}kurnik - sortowanie graczy po średnim rankingu{% endblock %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>Łowca młodych talentów</h1>
+            <div class="body">
+                <p class="microhead">Informacje ogólne</p>
+                <p class="microbody">
+                    Baza papersoccer.pl zawiera wszystkie konta z kurnika, które rozegrały przynajmniej jeden mecz w okresie: <br />
+                    <strong>&bull; 22.09.2014 - 29.04.2018</strong>
+                </p>
+
+                <p class="microhead">Jak wyświetlić statystyki gracza?</p>
+                <p class="microbody">
+                    W adresie strony wpisz: <strong>/kurnik/szukany_nick/</strong> <br />
+                    (np. <strong><a href="{% url 'schemes:kurnik_user' 'root'%}">/kurnik/root/</a></strong>)
+                </p>
+
+                <p class="microhead">Nie kojarzysz nicków graczy?</p>
+                <p class="microbody">
+                    Nic nie szkodzi, możesz skorzystać z linków: <br />
+                    &bull; <a href="{% url 'schemes:kurnik_users_ranking' %}">sortowanie po średnim rankingu</a><br />
+                    &bull; <a href="{% url 'schemes:kurnik_users_games' %}">sortowanie po liczbie meczy</a>
+
+                    {% comment %} 
+                    <br /><br />
+                    Tabele z powyższych linków zawierają tylko nicki graczy, którzy rozegrali powyżej 100 partii (<strong>13 482</strong>).      
+                    <br /><br />
+                    Wszystkich kont jest łącznie <strong>672 402</strong>: <br />
+                    &bull; <strong>214 262</strong> kont, gdzie gracz rozegrał tylko <strong>1</strong> mecz<br />
+                    &bull; <strong>123 739</strong> kont, gdzie gracz rozegrał <strong>2</strong> mecze<br />
+                    &bull; <strong> 73 855</strong> kont, gdzie gracz rozegrał <strong>3</strong> mecze<br />
+                    &bull; <strong> 47 232</strong> kont, gdzie gracz rozegrał <strong>4</strong> mecze<br />
+                    &bull; <strong> 33 241</strong> kont, gdzie gracz rozegrał <strong>5</strong> meczy itd.<br /><br />
+                    {% endcomment %} 
+                </p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

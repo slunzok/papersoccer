@@ -1,14 +1,88 @@
 {% extends "schemes/base.html" %}
 
-{% block title %}schemat - partia {% if scheme.replay != None %}#{{ scheme.replay.name }}{% else %}#{{ scheme.ureplay.name }}{% endif %} - edytuj{% endblock %}
+{% block title %}{% if scheme.replay != None %}#{{ scheme.replay.name }}{% else %}#{{ scheme.ureplay.name }}{% endif %} - edytuj schemat{% endblock %}
 
 {% block content %}
 
     <div class="item">
         <div class="content">
-            <h1><strong><a href="{% url 'schemes:user_public_scheme_directories' scheme.directory.user %}">@{{ scheme.directory.user }}</a></strong> - {% if scheme.directory.parent_dir.name != None %}<a href="{% url 'schemes:show_scheme_directory' scheme.directory.parent_dir.id %}">{{ scheme.directory.parent_dir.name }}</a> - {% endif %} <a href="{% url 'schemes:show_scheme_directory' scheme.directory.id %}">{{ scheme.directory.name }}</a></h1>
+            <h1><input class="left_button" type="button" value="#{{ scheme.name }}" id="game" onclick="toggleForm('replay_info', 'game')" /> &rarr; <a href="{% url 'schemes:show_scheme' scheme.id %}">zobacz schemat</a> <span class="right"> <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
 
-            <form action="" method="POST">
+            <h1 class="green" id="replay_info" style="display:none">{% if scheme.ureplay.parent_replay != None %}<span>Fork partii: <a href="{% url 'schemes:create_scheme' scheme.ureplay.parent_replay.name %}">{{ scheme.ureplay.parent_replay.name }}</a></span><br />{% endif %}
+            {% if scheme.replay != None %}
+                <span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />
+                {{ scheme.replay.replay_date }} - {{ scheme.replay.replay_time }} - 
+                {% if scheme.replay.replay_round == '60' %}
+                    1m
+                {% elif scheme.replay.replay_round == '120'%}
+                    2m
+                {% elif scheme.replay.replay_round == '180'%}
+                    3m
+                {% elif scheme.replay.replay_round == '300'%}
+                    5m
+                {% elif scheme.replay.replay_round == '420'%}
+                    7m
+                {% elif scheme.replay.replay_round == '900'%}
+                    15m
+                {% endif %} - 
+                Wygrał: 
+                {% if scheme.replay.result == '0-1' %}
+                    {{ scheme.replay.player2 }} 
+                {% else %} 
+                    {{ scheme.replay.player1 }} 
+                {% endif %}
+            {% else %}
+                {% if scheme.ureplay.parent_replay != None %}
+                    <span id="player1"></span> &rarr; #1 <br /><span id="player2"></span> &rarr; #2 <br />
+                    {{ scheme.ureplay.parent_replay.replay_date }} - {{ scheme.ureplay.parent_replay.replay_time }} - 
+                    {% if scheme.ureplay.parent_replay.replay_round == '60' %}
+                        1m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '120'%}
+                        2m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '180'%}
+                        3m
+                    {% elif scheme.ureplay.parent_replayy.replay_round == '300'%}
+                        5m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '420'%}
+                        7m
+                    {% elif scheme.ureplay.parent_replay.replay_round == '900'%}
+                        15m
+                    {% endif %} - 
+                    Wygrał: 
+                    {% if scheme.ureplay.parent_replay.result == '0-1' %}
+                        {{ scheme.ureplay.parent_replay.player2 }} 
+                    {% else %} 
+                        {{ scheme.ureplay.parent_replay.player1 }} 
+                    {% endif %}
+                {% else %}
+                    Niezależna partia treningowa - <a href="{% url 'schemes:create_scheme_from_custom_ureplay' scheme.ureplay.id %}">{{ scheme.ureplay.name }}</a>
+                {% endif %}
+            {% endif %}
+            </h1>
+
+            <h1 class="green"><span id="move"></span> <span class="right"><input type="button" value="dodaj schemat" id="status" onclick="newScheme()" /><input type="button" value="obróć boisko" onclick="rotate()" /></span></h1>
+
+            <h1 class="green" id="showElements" style="display:block"><span id="schemeElements">&nbsp;</span> <span class="right"><input type="button" value="formularz zgłoszeniowy" id="send_form" onclick="toggleForm('scheme_form_fields', 'send_form')" /></span></h1>
+
+            <script type="text/javascript">
+            function showHint(str) {
+                if (str.length == 0) { 
+                    document.getElementById("txtHint").innerHTML="";
+                    return;
+                } else {
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                            document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+                        }
+                    };
+                    xmlhttp.open("GET","/schematy/szukaj/"+str,true);
+                    xmlhttp.send();
+                }    
+            }
+            </script>
+
+            <form action="" method="POST" id="scheme_form_fields" style="display:none">
             {% csrf_token %}
 
             {{ scheme_form.non_field_errors }}
@@ -19,21 +93,14 @@
 
                 {% if field.html_name == "directory" %}
 
-                    <p><label for="id_directory">Katalog: </label>
-
-                    <select id="id_directory" name="directory" required>
-
-                    <option value="">---------</option>
-
-                    {% for user_directory in user_directories %}
-
-                    <option value="{{ user_directory.id }}" {% if user_directory.id == scheme.directory.id %}selected="selected"{% endif %}>{% if user_directory.scheme_access == '1' %}[oficjalny]{% elif user_directory.scheme_access == '2' %}[publiczny]{% elif user_directory.scheme_access == '3'%}[prywatny]{% endif %} {% if user_directory.scheme_type == '1' %}[obrona]{% elif user_directory.scheme_type == '2' %}[atak]{% elif user_directory.scheme_type == '3'%}[inne]{% endif %} {% if user_directory.parent_dir != None %}{{ user_directory.parent_dir.name }} -{% endif%} {{ user_directory.name }}</option>
-
-
-                    {% endfor %}
-
-                    </select></p>
+                    <p><label for="id_search">Szukaj:</label> <input class="scheme" id="id_search" maxlength="100" name="search" type="text" onkeyup="showHint(this.value)" required /></p>
+                    <p id="txtHint"></p>
                     <p><label></label> {{ field.errors.as_text }}</p>
+
+                    <!--
+                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                    <p><label></label> {{ field.errors.as_text }}</p>
+                    -->
 
                 {% else %}
 
@@ -46,19 +113,12 @@
 
                 {% if field.html_name == "directory" %}
 
-                    <p><label for="id_directory">Katalog:</label>
+                    <p><label for="id_search">Szukaj:</label> <input class="scheme" id="id_search" maxlength="100" name="search" type="text" onkeyup="showHint(this.value)" required /></p>
+                    <p id="txtHint"></p>
 
-                    <select id="id_directory" name="directory" required>
-
-                    <option value="">---------</option>
-
-                    {% for user_directory in user_directories %}
-
-                    <option value="{{ user_directory.id }}" {% if user_directory.id == scheme.directory.id %}selected="selected"{% endif %}>{% if user_directory.scheme_access == '1' %}[oficjalny]{% elif user_directory.scheme_access == '2' %}[publiczny]{% elif user_directory.scheme_access == '3'%}[prywatny]{% endif %} {% if user_directory.scheme_type == '1' %}[obrona]{% elif user_directory.scheme_type == '2' %}[atak]{% elif user_directory.scheme_type == '3'%}[inne]{% endif %} {% if user_directory.parent_dir != None %}{{ user_directory.parent_dir.name }} -{% endif%} {{ user_directory.name }}</option>
-
-                    {% endfor %}
-
-                    </select></p>
+                    <!--
+                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
+                    -->
 
                 {% else %}
 
@@ -70,12 +130,91 @@
 
             {% endfor %}
 
-            <p><label></label> <input name="change_scheme_settings" type="submit" value="Zmień ustawienia!" /></p>
+            <p><label></label> <input name="edit_scheme" type="submit" value="Edytuj schemat" /></p>
 
             </form>
+
+            <div class="board">
+                <canvas id="myCanvas" width="306" height="442"></canvas>
+                <script type="text/javascript">
+                    var players = [];
+
+                    {% if scheme.replay != None %}
+                        {% if scheme.replay.player2_elo|add:0 < 1200 %}
+                            players.push('{{ scheme.replay.player2 }}', 'blue', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 1200 and scheme.replay.player2_elo|add:0 < 1500 %}
+                            players.push('{{ scheme.replay.player2 }}', 'green', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 1500 and scheme.replay.player2_elo|add:0 < 1800 %}
+                            players.push('{{ scheme.replay.player2 }}', 'yellow', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 1800 and scheme.replay.player2_elo|add:0 < 2100 %}
+                            players.push('{{ scheme.replay.player2 }}', 'orange', '{{ scheme.replay.player2_elo }}');
+                        {% elif scheme.replay.player2_elo|add:0 >= 2100 %}
+                            players.push('{{ scheme.replay.player2 }}', 'red', '{{ scheme.replay.player2_elo }}');
+                        {% endif %}
+
+                        {% if scheme.replay.player1_elo|add:0 < 1200 %}
+                            players.push('{{ scheme.replay.player1 }}', 'blue', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 1200 and scheme.replay.player1_elo|add:0 < 1500 %}
+                            players.push('{{ scheme.replay.player1 }}', 'green', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 1500 and scheme.replay.player1_elo|add:0 < 1800 %}
+                            players.push('{{ scheme.replay.player1 }}', 'yellow', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 1800 and scheme.replay.player1_elo|add:0 < 2100 %}
+                            players.push('{{ scheme.replay.player1 }}', 'orange', '{{ scheme.replay.player1_elo }}');
+                        {% elif scheme.replay.player1_elo|add:0 >= 2100 %}
+                            players.push('{{ scheme.replay.player1 }}', 'red', '{{ scheme.replay.player1_elo }}');
+                        {% endif %}
+                            var show_match_info = 1;
+                    {% else %}
+                        {% if scheme.ureplay.parent_replay != None %}
+                            {% if scheme.ureplay.parent_replay.player2_elo|add:0 < 1200 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'blue', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 1200 and scheme.ureplay.parent_replay.player2_elo|add:0 < 1500 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'green', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 1500 and scheme.ureplay.parent_replay.player2_elo|add:0 < 1800 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'yellow', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 1800 and scheme.ureplay.parent_replay.player2_elo|add:0 < 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'orange', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player2_elo|add:0 >= 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player2 }}', 'red', '{{ scheme.ureplay.parent_replay.player2_elo }}');
+                            {% endif %}
+
+                            {% if scheme.ureplay.parent_replay.player1_elo|add:0 < 1200 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'blue', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 1200 and scheme.ureplay.parent_replay.player1_elo|add:0 < 1500 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'green', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 1500 and scheme.ureplay.parent_replay.player1_elo|add:0 < 1800 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'yellow', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 1800 and scheme.ureplay.parent_replay.player1_elo|add:0 < 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'orange', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% elif scheme.ureplay.parent_replay.player1_elo|add:0 >= 2100 %}
+                                players.push('{{ scheme.ureplay.parent_replay.player1 }}', 'red', '{{ scheme.ureplay.parent_replay.player1_elo }}');
+                            {% endif %}
+                            var show_match_info = 1;
+                        {% else %}
+                            var show_match_info = 0;
+                        {% endif %}
+                        
+                    {% endif %}
+
+                    {% if scheme.replay != None %}
+                        var moves_string = "{{ scheme.replay.moves }}";
+                    {% else %}
+                        var moves_string = "{{ scheme.ureplay.moves }}";
+                    {% endif %}
+                    var moves = moves_string.split(" ");
+                    var elements_string = "{{ scheme.elements }}";
+                    var elements = elements_string.split(",");
+
+                    var id = Number(elements[0]);
+
+                    {% if scheme.board == '1' %}
+                        var rotate_board = 1;
+                    {% endif %}
+                </script>
+                <script type="text/javascript" src="/static/js/edit_scheme.js"></script>
+            </div>
 
         </div>
     </div>
 
 {% endblock %}
-

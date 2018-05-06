@@ -195,7 +195,7 @@ def create_scheme(request, replay_id):
     else:
         scheme_form = SchemeForm(user_id=request.user.id)
 
-    return render(request, 'schemes/create_scheme.html', {'replay': replay, 'scheme_form': scheme_form, 'active': 2})
+    return render(request, 'schemes/add_scheme.html', {'replay': replay, 'scheme_form': scheme_form, 'active': 2})
 
 # 09. /partia/<replay_id>/dodaj/
 def add_to_user_replay_directory(request, replay_id):
@@ -476,7 +476,7 @@ def create_scheme_from_custom_ureplay(request, replay_id):
         else:
             scheme_form = SchemeForm(user_id=request.user.id)
 
-        return render(request, 'schemes/create_scheme_from_custom_ureplay.html', {'ureplay': ureplay, 'scheme_form': scheme_form, 'active': 2})
+        return render(request, 'schemes/add_scheme.html', {'ureplay': ureplay, 'scheme_form': scheme_form, 'active': 2})
 
 # 06. /orlik/partia/<replay>/edytuj/
 def edit_ureplay(request, replay_id):

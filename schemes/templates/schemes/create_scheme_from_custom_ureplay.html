@@ -1,6 +1,6 @@
 {% extends "schemes/base.html" %}
 
-{% block title %}dodaj schemat - #{{ ureplay.name }}{% endblock %}
+{% block title %}#{{ ureplay.name }} - dodaj schemat{% endblock %}
 
 {% block content %}
 
@@ -110,15 +110,15 @@
                         players.push('{{ ureplay.parent_replay.player1 }}', 'red', '{{ ureplay.parent_replay.player1_elo }}');
                     {% endif %}
 
-                    var is_fork = 1;
+                    var show_match_info = 1;
                 {% else %}
-                    var is_fork = 0;
+                    var show_match_info = 0;
                 {% endif %}
 
                     var moves_string = "{{ ureplay.moves }}";
                     var moves = moves_string.split(" ");
                 </script>
-                <script type="text/javascript" src="/static/js/board2.js"></script>
+                <script type="text/javascript" src="/static/js/add_scheme.js"></script>
             </div>
 
         </div>

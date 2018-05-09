@@ -22,15 +22,14 @@
 
                     <tr>
                         <th style="width: 50%" onclick="sortTable(0, 'myTable')">Nazwa</th>
-                        <th style="width: 50%" onclick="sortTable(1, 'myTable')" colspan="2">Ustawienia</th>
+                        <th style="width: 50%" onclick="sortTable(1, 'myTable')">Dodał</th>
                     </tr>
 
                     {% for scheme in schemes %}
 
                     <tr>
-                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a></td>
-                        <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
-                        <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
+                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a>{% if scheme.user == request.user %}<br /><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a>{% endif %}</td>
+                        <td >@{{ scheme.user }}</td>
                     </tr>
 
                     {% endfor %}

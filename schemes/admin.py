@@ -7,28 +7,28 @@ class KurnikReplayAdmin(admin.ModelAdmin):
     list_display = ('name', 'player1', 'player2')
 
 class UserReplayAdmin(admin.ModelAdmin):
-    list_display = ('parent_replay', 'name', 'user', 'replay_access', 'moves')
+    list_display = ('parent_replay', 'name', 'user', 'replay_access', 'moves', 'created_at', 'updated_at')
 
 class SchemeDirectoryAdmin(admin.ModelAdmin):
-    list_display = ('parent_dir', 'name', 'user', 'scheme_access', 'scheme_type')
+    list_display = ('parent_dir', 'name', 'user', 'scheme_access', 'scheme_type', 'created_at', 'updated_at')
 
 class SchemeAdmin(admin.ModelAdmin):
-    list_display = ('directory', 'replay', 'ureplay', 'user', 'name', 'elements', 'board')
+    list_display = ('directory', 'replay', 'ureplay', 'user', 'name', 'elements', 'board', 'created_at', 'updated_at')
 
 class ReplayDirectoryAdmin(admin.ModelAdmin):
-    list_display = ('parent_dir', 'name', 'user', 'replay_access')
+    list_display = ('parent_dir', 'name', 'user', 'replay_access', 'created_at', 'updated_at')
 
 class ReplayAdmin(admin.ModelAdmin):
-    list_display = ('directory', 'replay', 'ureplay', 'user', 'name', 'checked',)
+    list_display = ('directory', 'replay', 'ureplay', 'user', 'name', 'checked', 'created_at', 'updated_at')
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'kurnik_name', 'notifications',)
 
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'content', 'created',)
+    list_display = ('user', 'content', 'created', 'updated')
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('entry', 'user', 'content', 'created',)
+    list_display = ('entry', 'user', 'content', 'created', 'updated')
 
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('sender', 'receiver', 'entry', 'created',)

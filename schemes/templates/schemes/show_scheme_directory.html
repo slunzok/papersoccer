@@ -86,29 +86,20 @@
                     <tr>
                         <th style="width: 50%" onclick="sortTable(0, 'myTable2')">Nazwa</th>
                         {% if directory.scheme_access == '1' %}
-                            <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Autor</th>
+                            <th style="width: 50%" onclick="sortTable(1, 'myTable2')">Dodał</th>
                         {% else %}
-                            {% if directory.user == request.user %}
-                                <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Ustawienia</th>
-                            {% else %}
-                                <th style="width: 50%" onclick="sortTable(1, 'myTable2')" colspan="2">Komentarz</th>
-                            {% endif %}
+                            <th style="width: 50%" onclick="sortTable(1, 'myTable2')">Komentarz</th>
                         {% endif %}
                     </tr>
 
                     {% for scheme in directory.schemes.all %}
 
                     <tr>
-                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a></td>
+                        <td><a href="{% url 'schemes:show_scheme' scheme.id %}">{{ scheme.name }}</a> {% if scheme.user == request.user %}<br /><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a> - <a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a>{% endif %}</td>
                         {% if scheme.directory.scheme_access == '1' %}
-                            <td colspan="2"><a href="{% url 'schemes:user_official_schemes' scheme.directory.id scheme.user %}"> @{{ scheme.user }}</a></td>
+                            <td><a href="{% url 'schemes:user_official_schemes' scheme.directory.id scheme.user %}"> @{{ scheme.user }}</a></td>
                         {% else %}
-                            {% if directory.user == request.user %}
-                                <td><a href="{% url 'schemes:edit_scheme' scheme.id %}">edytuj</a></td>
-                                <td><a href="{% url 'schemes:delete_scheme' scheme.id %}">usuń</a></td>
-                            {% else %}
-                                <td colspan="2">{% if scheme.comment == '' %}-{% else %}{{ scheme.comment }}{% endif %}</td>
-                            {% endif %}
+                            <td>{% if scheme.comment == '' %}-{% else %}{{ scheme.comment }}{% endif %}</td>
                         {% endif %}
                     </tr>
 

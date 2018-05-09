@@ -53,6 +53,11 @@ class UserReplay(models.Model):
     user = models.ForeignKey(User, related_name="ureplay_owner", on_delete=models.CASCADE) 
     replay_access = models.CharField(max_length=1, choices=REPLAY_ACCESS)
     moves = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -64,6 +69,11 @@ class SchemeDirectory(models.Model):
     scheme_access = models.CharField(max_length=1, choices=SCHEME_ACCESS)
     scheme_type = models.CharField(max_length=1, choices=SCHEME_TYPE)
     description = models.TextField(max_length=4000, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -77,6 +87,11 @@ class Scheme(models.Model):
     elements = models.CharField(validators=[validate_comma_separated_integer_list], max_length=100)
     board = models.CharField(max_length=1, choices=BOARD_TYPE)
     comment = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -86,6 +101,11 @@ class ReplayDirectory(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, related_name="replay_directory_owner", on_delete=models.CASCADE)
     replay_access = models.CharField(max_length=1, choices=REPLAY_ACCESS)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -97,6 +117,11 @@ class Replay(models.Model):
     user = models.ForeignKey(User, related_name="vreplay_owner", on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     checked = models.CharField(max_length=1, choices=REPLAY_STATUS)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.checked
@@ -113,6 +138,7 @@ class Entry(models.Model):
     user = models.ForeignKey(User, related_name="entry_author", on_delete=models.CASCADE)
     content = models.TextField(max_length=5000)
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.content
@@ -122,6 +148,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, related_name="comment_author", on_delete=models.CASCADE)
     content = models.TextField(max_length=5000)
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.content

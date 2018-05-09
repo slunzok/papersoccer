@@ -187,13 +187,12 @@ def create_scheme(request, replay_id):
                 scheme = scheme_form.save(commit=False)
                 scheme.replay = replay
                 scheme.user = request.user
-                scheme.name = replay.name
                 scheme.save()
                 return HttpResponseRedirect(reverse('schemes:show_scheme', args=(scheme.id,)))
         else:
             return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
     else:
-        scheme_form = SchemeForm(user_id=request.user.id)
+        scheme_form = SchemeForm(user_id=request.user.id, initial={'name': replay.name})
 
     return render(request, 'schemes/add_scheme.html', {'replay': replay, 'scheme_form': scheme_form, 'active': 2})
 
@@ -468,13 +467,12 @@ def create_scheme_from_custom_ureplay(request, replay_id):
                     scheme = scheme_form.save(commit=False)
                     scheme.ureplay = ureplay
                     scheme.user = request.user
-                    scheme.name = ureplay.name
                     scheme.save()
                     return HttpResponseRedirect(reverse('schemes:show_scheme', args=(scheme.id,)))
             else:
                 return HttpResponse("Tylko zalogowani użytkownicy mogą dodawać schematy!")
         else:
-            scheme_form = SchemeForm(user_id=request.user.id)
+            scheme_form = SchemeForm(user_id=request.user.id, initial={'name': ureplay.name})
 
         return render(request, 'schemes/add_scheme.html', {'ureplay': ureplay, 'scheme_form': scheme_form, 'active': 2})
 

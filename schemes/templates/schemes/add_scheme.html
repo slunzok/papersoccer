@@ -6,7 +6,7 @@
 
     <div class="item">
         <div class="content">
-            <h1><input class="left_button" type="button" value="{% if replay != None %}#{{ replay.name }}{% else %}#{{ ureplay.name }}{% endif %}" id="game" onclick="toggleForm('replay_info', 'game')" /> <span class="right">{% if replay != None %}<a href="{% url 'schemes:add_to_user_replay_directory' replay.name %}">dodaj do katalogu</a>{% else %}<a href="{% url 'schemes:add_to_user_replay_directory' ureplay.id %}">dodaj do katalogu</a>{% endif %} <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
+            <h1><input class="left_button" type="button" value="{% if replay != None %}#{{ replay.name }}{% else %}#{{ ureplay.name }}{% endif %}" id="game" onclick="toggleForm('replay_info', 'game')" /> <span class="right">{% if replay != None %}<a href="{% url 'schemes:add_to_user_replay_directory' replay.name %}">dodaj do katalogu</a>{% else %}<a href="{% url 'schemes:add_ureplay_to_user_replay_directory' ureplay.id %}">dodaj do katalogu</a>{% endif %} <input type="button" value="wstecz" onclick="prev()" /><span id="state"></span><input type="button" value="dalej" onclick="next()" /></span></h1>
 
             <h1 class="green" id="replay_info" style="display:none">{% if ureplay.parent_replay != None %}<span>Fork partii: <a href="{% url 'schemes:create_scheme' ureplay.parent_replay.name %}">{{ ureplay.parent_replay.name }}</a></span><br />{% endif %}
 
@@ -98,12 +98,7 @@
                     <p id="txtHint"></p>
                     <p><label></label> {{ field.errors.as_text }}</p>
 
-                    <!--
-                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
-                    <p><label></label> {{ field.errors.as_text }}</p>
-                    -->
-
-                {% elif field.html_name != "name" %}
+                {% else %}
 
                     <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
                     <p><label></label> {{ field.errors.as_text }}</p>
@@ -117,11 +112,7 @@
                     <p><label for="id_search">Szukaj:</label> <input class="scheme" id="id_search" maxlength="100" name="search" type="text" onkeyup="showHint(this.value)" required /></p>
                     <p id="txtHint"></p>
 
-                    <!--
-                    <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
-                    -->
-
-                {% elif field.html_name != "name" %}
+                {% else %}
 
                     <p><label for="id_{{ field.html_name }}">{{ field.label }}:</label> {{ field }}</p>
 

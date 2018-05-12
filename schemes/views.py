@@ -47,6 +47,12 @@ def online_users(request):
 def search_kurnik_player(request):
     return render(request, 'schemes/search_kurnik_player.html', {'active': 1})
 
+def cookies(request):
+    return render(request, 'schemes/cookies.html', {'active': 1})
+
+def faq(request):
+    return render(request, 'schemes/faq.html', {'active': 1})
+
 # Schemes
 
 # 01. /schematy/

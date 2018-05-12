@@ -9,6 +9,8 @@ urlpatterns = [
     re_path(r'^$', views.index, name='index'),
     re_path(r'^online/$',  views.online_users, name='online_users'),
     re_path(r'^headhunter/$',  views.search_kurnik_player, name='search_kurnik_player'),
+    re_path(r'^cookies/$', views.cookies, name='cookies'),
+    re_path(r'^faq/$', views.faq, name='faq'),
     # Schemes
     re_path(r'^schematy/$',  views.user_scheme_directories, name='user_scheme_directories'),
     re_path(r'^schematy/(?P<username>([a-zA-Z0-9_\-]+))/$',  views.user_public_scheme_directories, name='user_public_scheme_directories'),

@@ -1,0 +1,59 @@
+{% extends "schemes/base.html" %}
+
+{% block title %}trybuna piłkarska{% endblock %}
+
+{% block content %}
+
+    <div class="item">
+        <div class="content">
+            <h1>FAQ - pytania i odpowiedzi</h1>
+
+            <div class="body">
+
+                    <p class="microhead">Co to za strona?</p>
+                    <p class="microbody">
+                    <strong><a href="{% url 'schemes:index' %}">papersoccer.pl</a></strong> to strona internetowa, gdzie użytkownicy mogą w wygodny sposób dodawać i zarządzać schematami/partiami. Kurnik umożliwia jedynie przeglądanie rozegranych gier. Serwis papersoccer.pl wprowadza nowe funkcje jak: możliwość obracania boiska, orlik treningowy z możliwością zapisania własnej partii, mazak Gmocha - wyznaczanie wszystkich możliwych wariantów ruchu, biblioteczka: schematów i analizowanych partii oraz statystki graczy (uwzględniające średni ranking).
+                    </p>
+
+                    <p class="microhead">Czy trzeba założyć konto, żeby korzystać z serwisu?</p>
+                    <p class="microbody">Tak, jeśli chcesz korzystać ze wszystkich dostępnych funkcji. Niezalogowani mają dostęp do przeglądania partii i orlika treningowego, ale bez możliwości zapisania schematu/partii. Rejestracja w serwisie jest darmowa i wymaga jedynie podania nicku i hasła (pola email i nick na kurniku są nieobowiązkowe).
+                    </p>
+
+                    <p class="microhead">Co to jest partia i jak ją mogę przejrzeć?</p>
+                    <p class="microbody">Partia to zapisany stan rozegranej gry. Zawiera informacje o graczach, ich rankingu, dacie i czasie rozegrania meczu oraz wykonanych ruchach. Aktualnie <a href="{% url 'schemes:index' %}">papersoccer.pl</a> dysponuje partiami z kurnika z okresu 22.09.2014 - 29.04.2018 (od liczby: 60896519 do 66373456). Można je przeglądać poprzez wpisanie w polu adresu: papersoccer.pl/partia/liczba/ <br /> np. <strong><a href="{% url 'schemes:create_scheme' '61943488' %}">http://papersoccer.pl/partia/61943488/</a></strong>
+                    </p>
+
+                    <p class="microhead">Jak mogę przejrzeć statystyki gracza?</p>
+                    <p class="microbody">Poprzez wpisanie w polu adresu: papersoccer.pl/kurnik/szukany_nick np. <strong><a href="{% url 'schemes:kurnik_user' 'root' %}">http://papersoccer.pl/kurnik/root/</a></strong> Strona wyświetli wszystkich przeciwników, z którymi szukany gracz rozegrał mecze (a gdy klikniesz w link, wyświetlą ci się wszystkie partie między tymi graczami). Jeśli nie znasz nicków graczy, to możesz skorzystać ze strony: <strong><a href="{% url 'schemes:search_kurnik_player' %}">łowca młodych talentów</a></strong> gdzie znajdziesz dwie tabele (sortowanie po: średnim rankingu i liczbie partii) zawierające nicki wszystkich graczy, którzy rozegrali przynajmniej 100 partii.
+                    </p>
+
+                    <p class="microhead">Co to jest schemat i jak go dodać?</p>
+                    <p class="microbody">Schemat to pewne sekwencje ruchów, które przy sprzyjającym układzie linii na boisku (lub jego wycinku) prowadzą do zwycięstwa, zablokowania przeciwnika lub zyskania przewagi pod bramką w obronie. <br /><br />
+                    W menu po lewej stronie w strefie kibica znajdziesz link 'moje schematy'. Umożliwia on utworzenie katalogów, w których będziesz mógł przechowywać schematy. Katalog może mieć podkatalogi itp. jak sobie zorganizujesz strukturę katalogów, zależy tylko od ciebie. Zarejestrowany użytkownik może dodawać dwa rodzaje katalogów: z dostępem publicznym i prywatnym. Trzecim rodzajem są schematy oficjalne (to te znajdujące się po lewej stronie w menu - na razie tylko administrator może przyznać katalogowi status oficjalny). <br /><br />
+                    Załóżmy, że dodałeś dwa katalogi: 'moje obrony' i 'moje ataki'. Teraz wystarczy wyświetlić partię (np. <strong><a href="{% url 'schemes:create_scheme' '61943488' %}">61943488</a></strong> i kliknąć w guzik 'dodaj schemat'. Pojawi się formularz zgłoszeniowy, który musisz wypełnić (pole 'Opis' jest nieobowiązkowe). Pole 'Szukaj' szuka wpisanej przez ciebie nazwy w twoich katalogach (w naszym przykładzie to tylko dwa katalogi) + w katalogach oficjalnych. Jeśli znajdzie coś pasującego do kryterium wyszukiwania, wyświetli pole 'Schemat', z którego wybierasz katalog, gdzie chcesz wrzucić schemat (np. 'moje ataki'). Pole 'Nazwa' domyślnie zawiera numer partii, ale możesz go zmienić na co chcesz (np. atak 01). Następnie klikasz w 'Zapisz schemat' i gotowe. Teraz wchodząc do 'moje schematy', następnie do katalogu 'moje ataki' ujrzysz link 'atak 01' z twoim schematem.
+                    </p>
+
+                    <p class="microhead">Do czego służy sekcja 'analiza partii'?</p>
+                    <p class="microbody">Sekcja 'moje schematy' umożliwia grupowanie <strong>schematów</strong> do katalogów, a 'analiza partii' umożliwia grupowanie <strong>partii</strong> do katalogów. To zasadnicza różnica i bardzo przydatna opcja np. przy analizowaniu partii jakiegoś gracza. Wtedy tworzysz katalog np. 'root', w nim podkatalog 'root vs zioloo66' i następnie dodajesz tam wszystkie mecze rozegrane między tymi graczami. Wyświetli ci się tabela z nazwą (domyślnie: id partii, można ją zmienić) + status (sprawdzona/niesprawdzona). Jeśli do danej partii został przypisany jakiś schemat, to również zostanie on wyświetlony.<br /><br />
+                    Przy dużej liczbie partii, dodawanie do katalogów może być czasochłonne, dlatego warto skorzystać z opcji: 'Utwórz katalog i skopiuj do niego partie' lub 'Skopiuj partie do już istniejącego katalogu', które umożliwią skopiowanie wszystkich partii za jednym kliknięciem (<strong><a href="{% url 'schemes:kurnik_user_battles' 'root' 'zioloo66' %}">root vs zioloo66</a></strong> - przykładowy katalog, który zawiera te dwa linki).
+                    </p>
+
+                    <p class="microhead">Czy można dodawać schematy z partii treningowych?</p>
+                    <p class="microbody">Tak, ale jest z tym związane pewne ryzyko, jeśli użyjesz cudzej partii treningowej. Może się zdarzyć, że użytkownik udostępni publicznie partię treningową, ty na jej podstawie dodasz schemat. Po jakimś czasie użytkownik może zedytować tę partię treningową, co doprowadzi do tego, że zapisane elementy w schemacie mogą nie odpowiadać temu pierwotnemu. Poza tym, jeśli użytkownik usunie partie treningową, to również zostanie usunięty twój schemat. Najlepiej więc dodawać schematy z oficjalnych partii, które nigdy nie ulegą zmianom (lub z swoich własnych).<br /><br />
+                    </p>
+
+                    <p class="microhead">Dodałem wiele schematów z jednej partii treningowej i gdzieś znikły lub nie wyświetlają się właściwie.</p>
+                    <p class="microbody">Nie, to tak nie działa. Każdy schemat odwołuje się do jakiegoś obiektu (w tym przypadku do partii treningowej). Jeśli masz jedną partię treningową, to edytując zapisane ruchy, zmienisz również sposób, w jaki będą wyświetlać się schematy, które od niej zależą. Jedyne rozwiązanie to utworzenie nowej partii treningowej, następnie dodanie schematu na jej podstawie.
+                    </p>
+
+                    <p class="microhead">Czy można użyć orlika treningowego do partii oficjalnych?</p>
+                    <p class="microbody">
+                    Tak, wystarczy zmienić w adresie: <br />
+                    <strong><a href="{% url 'schemes:create_scheme' '61943488' %}">http://papersoccer.pl/partia/61943488/</a></strong> <br />na<br /> <strong><a href="{% url 'schemes:training_dependent' '61943488' %}">http://papersoccer.pl/orlik/61943488/</a></strong> <br />Następnie przejść do interesującego cię momentu, kliknąć w 'tu zakończ ruch' i możesz już sobie ćwiczyć (+ ewentualnie zapisać, jeśli chcesz później np. dodać schemat, to najpierw musisz zapisać ją jako partia treningowa).
+                    </p>
+                 
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
